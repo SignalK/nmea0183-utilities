@@ -1,7 +1,7 @@
 {
   "name": "nmea0183-utilities",
   "version": "0.1.0",
-  "description": "Various utilities for transforming NMEA0183 units into SI units. ",
+  "description": "Various utilities for transforming NMEA0183 units into SI units for use in SK.",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
