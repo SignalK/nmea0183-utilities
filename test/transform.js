@@ -104,4 +104,18 @@ describe('Transform', function() {
     expect(value).to.equal(2.2369362920544025);
     done();
   });
+
+  it('DEG -> RAD', function(done) {
+    var value = utils.transform(1, 'deg', 'rad');
+    expect(value).to.be.a('number');
+    expect(value).to.equal(0.0174532925239284);
+    done();
+  });
+
+  it('RAD -> DEG', function(done) {
+    var value = utils.transform(1, 'rad', 'deg');
+    expect(value).to.be.a('number');
+    expect(value).to.equal(57.295779578552306);
+    done();
+  });
 });

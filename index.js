@@ -25,6 +25,9 @@
     MS_IN_KPH: 3.6,
     MS_IN_MPH: 2.236936,
     MS_IN_KNOTS: 1.943844,
+    // DEGREE
+    DEG_IN_RAD: 0.0174532925,
+    RAD_IN_DEG: 57.2957795,
   };
 
   exports.valid = function(sentence) {
@@ -102,6 +105,15 @@
       if(outputFormat == 'knots') return value / utils.RATIOS.KNOTS_IN_MS;
       if(outputFormat == 'mph') return value / utils.RATIOS.MPH_IN_MS;
       if(outputFormat == 'kph') return value / utils.RATIOS.KPH_IN_MS;
+    }
+
+    // ANGLES
+    if(inputFormat == 'deg') {
+      if(outputFormat == 'rad') return value / utils.RATIOS.RAD_IN_DEG;
+    }
+
+    if(inputFormat == 'rad') {
+      if(outputFormat == 'deg') return value / utils.RATIOS.DEG_IN_RAD;
     }
 
     // Just return input if input/output formats are not recognised.
