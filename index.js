@@ -28,6 +28,9 @@
     // DEGREE
     DEG_IN_RAD: 0.0174532925,
     RAD_IN_DEG: 57.2957795,
+    // TEMPERATURES
+    // Celcius
+    CELCIUS_IN_KELVIN: 273.15,
   };
 
   exports.valid = function(sentence) {
@@ -114,6 +117,14 @@
 
     if(inputFormat == 'rad') {
       if(outputFormat == 'deg') return value / utils.RATIOS.DEG_IN_RAD;
+    }
+    
+    if(inputFormat == 'c') {
+      if(outputFormat == 'k') return value + utils.RATIOS.CELCIUS_IN_KELVIN;
+    }
+    
+    if(inputFormat == 'k') {
+      if(outputFormat == 'c') return value - utils.RATIOS.CELCIUS_IN_KELVIN;
     }
 
     // Just return input if input/output formats are not recognised.
