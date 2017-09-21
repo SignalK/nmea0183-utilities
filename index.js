@@ -1,3 +1,4 @@
+var _ = require('lodash');
 'use strict';
 
 (function() {
@@ -166,7 +167,7 @@
 
       // HACK copied from jamesp/node-nmea
       if(year < 73) {
-        year = this.int("20" + year);
+        year = this.int("20" + _.padStart(year, 2, '0'));
       } else { 
         year = this.int("19" + year);
       }
