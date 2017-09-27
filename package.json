@@ -1,6 +1,6 @@
 {
-  "name": "nmea0183-utilities",
-  "version": "0.3.3",
+  "name": "@signalk/nmea0183-utilities",
+  "version": "0.4.0",
   "description": "Various utilities for transforming NMEA0183 units into SI units for use in SK.",
   "main": "index.js",
   "scripts": {
@@ -20,7 +20,7 @@
     "nmea0183",
     "signalk"
   ],
-  "author": "Fabian Tollenaar <fabian@starting-point.nl>",
+  "author": "Fabian Tollenaar <fabian@decipher.industries>",
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/SignalK/nmea0183-utilities/issues"
