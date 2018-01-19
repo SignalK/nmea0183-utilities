@@ -40,8 +40,10 @@
       return false;
     }
 
-    if ((sentence.charAt(0) == '$' || sentence.charAt(0) == '!') && sentence.charAt(sentence.length - 3) == '*') {
-      if ( typeof validateChecksum === 'undefined' || validateChecksum ) {
+    var validateChecksum = typeof validateChecksum === 'undefined' || validateChecksum
+
+    if ((sentence.charAt(0) == '$' || sentence.charAt(0) == '!') && (validateChecksum == false || sentence.charAt(sentence.length - 3) == '*')) {
+      if ( validateChecksum ) {
         var check = 0;
         var split = sentence.split('*');
         
