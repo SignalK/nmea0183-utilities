@@ -155,7 +155,7 @@
     if(time) {
       hours = this.int(time.slice(0, 2), true);
       minutes = this.int(time.slice(2, 4), true);
-      seconds = this.int(time.slice(-2), true);
+      seconds = this.int(time.slice(4, 6), true);
     } else {
       var dt = new Date();
       hours = dt.getUTCHours();
