@@ -1,6 +1,6 @@
 var chai    = require("chai");
 var expect  = chai.expect;
-var utils   = require('../index');
+var utils   = require('../');
 
 describe('Transform', function() {
   it('KM -> NM', function(done) {
@@ -118,14 +118,14 @@ describe('Transform', function() {
     expect(value).to.equal(57.295779578552306);
     done();
   });
-  
+
   it('CELCIUS -> KELVIN', function(done) {
     var value = utils.transform(0, 'c', 'k');
     expect(value).to.be.a('number');
     expect(value).to.equal(273.15);
     done();
 });
-  
+
   it('KELVIN -> CELCIUS', function(done) {
     var value = utils.transform(0, 'k', 'c');
     expect(value).to.be.a('number');

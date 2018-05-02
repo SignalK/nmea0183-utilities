@@ -1,6 +1,6 @@
 var chai    = require("chai");
 var expect  = chai.expect;
-var utils   = require('../index');
+var utils   = require('../');
 
 describe('Coordinate', function() {
   var N = utils.coordinate('5222.3277', 'N');

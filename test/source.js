@@ -1,6 +1,6 @@
 var chai    = require("chai");
 var expect  = chai.expect;
-var utils   = require('../index');
+var utils   = require('../');
 
 describe('Source', function() {
   it('Should be an object', function(done) {

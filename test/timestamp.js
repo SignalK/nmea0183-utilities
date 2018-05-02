@@ -1,6 +1,6 @@
 var chai    = require("chai");
 var expect  = chai.expect;
-var utils   = require('../index');
+var utils   = require('../');
 
 describe('Timestamp', function() {
   var value = utils.timestamp('220104', '171089');

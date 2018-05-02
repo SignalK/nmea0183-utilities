@@ -1,6 +1,6 @@
 var chai    = require("chai");
 var expect  = chai.expect;
-var utils   = require('../index');
+var utils   = require('../');
 
 describe('Types', function() {
   it('Exports.zero(2) should be a string and equal "02"', function(done) {
