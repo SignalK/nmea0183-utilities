@@ -3,7 +3,7 @@ NMEA0183-utilities
 
 [![Build Status](https://travis-ci.org/SignalK/nmea0183-utilities.svg)](https://travis-ci.org/SignalK/nmea0183-utilities)
 
-Various utilities for transforming NMEA0183 units into SI units for use in Signal K. 
+Various utilities for transforming NMEA0183 units into SI units for use in Signal K.
 
 
 Installation
@@ -18,7 +18,7 @@ Some examples
 ```javascript
 var utils = require('nmea0183-utilities');
 
-// Transform 3 knots into m/s
+// Transform 3 knots into m/s. Uses [convert-units](https://github.com/ben-ng/convert-units) internally.
 var ms = utils.transform(3, 'knots', 'ms');
 
 // Generate a source object for SignalK from a sentence
