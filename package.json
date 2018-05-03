@@ -2,7 +2,7 @@
   "name": "@signalk/nmea0183-utilities",
   "version": "0.6.0",
   "description": "Various utilities for transforming NMEA0183 units into SI units for use in SK.",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "mocha"
   },
@@ -25,5 +25,9 @@
   "bugs": {
     "url": "https://github.com/SignalK/nmea0183-utilities/issues"
   },
-  "homepage": "https://github.com/SignalK/nmea0183-utilities#readme"
+  "homepage": "https://github.com/SignalK/nmea0183-utilities#readme",
+  "dependencies": {
+    "convert-units": "ben-ng/convert-units",
+    "lodash": "^4.17.10"
+  }
 }

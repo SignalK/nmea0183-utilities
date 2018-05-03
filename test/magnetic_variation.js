@@ -1,6 +1,6 @@
 var chai    = require("chai");
 var expect  = chai.expect;
-var utils   = require('../index');
+var utils   = require('../');
 
 describe('Magnetic Variation', function() {
   var N = utils.magneticVariaton(1, 'N');
