@@ -33,7 +33,7 @@
     CELCIUS_IN_KELVIN: 273.15,
   };
 
-  exports.valid = function(sentence, validateChecksum) {
+  exports.valid = function(sentence, validateChecksum, acceptWithoutChecksum) {
     sentence = String(sentence).trim();
 
     if (sentence === "") {
@@ -41,18 +41,19 @@
     }
 
     var validateChecksum = typeof validateChecksum === 'undefined' || validateChecksum
+    var acceptWithoutChecksum = typeof acceptWithoutChecksum === 'undefined' || acceptWithoutChecksum
 
     if (sentence.charAt(0) == '$' || sentence.charAt(0) == '!') {
       if (validateChecksum && sentence.charAt(sentence.length - 3) == '*') {
         var check = 0;
         var split = sentence.split('*');
-        
+
         for (var i = 1; i < split[0].length; i++) {
           check = check ^ split[0].charCodeAt(i);
         };
-        
+
         return (parseInt(split[1], 16) == check);
-      } else if (validateChecksum == false || sentence.charAt(sentence.length - 3) != '*') { 
+      } else if (validateChecksum == false || (acceptWithoutChecksum && sentence.charAt(sentence.length - 3) != '*')) {
         return true
       }
     }
