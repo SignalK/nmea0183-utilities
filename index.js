@@ -42,8 +42,8 @@
 
     var validateChecksum = typeof validateChecksum === 'undefined' || validateChecksum
 
-    if ((sentence.charAt(0) == '$' || sentence.charAt(0) == '!') && (validateChecksum == false || sentence.charAt(sentence.length - 3) == '*')) {
-      if ( validateChecksum ) {
+    if (sentence.charAt(0) == '$' || sentence.charAt(0) == '!') {
+      if (validateChecksum && sentence.charAt(sentence.length - 3) == '*') {
         var check = 0;
         var split = sentence.split('*');
         
@@ -52,7 +52,7 @@
         };
         
         return (parseInt(split[1], 16) == check);
-      } else {
+      } else if (validateChecksum == false || sentence.charAt(sentence.length - 3) != '*') { 
         return true
       }
     }
