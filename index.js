@@ -33,7 +33,7 @@
     CELCIUS_IN_KELVIN: 273.15,
   };
 
-  exports.valid = function(sentence, validateChecksum) {
+  exports.valid = function(sentence, validateChecksum, requireChecksum) {
     sentence = String(sentence).trim();
 
     if (sentence === "") {
@@ -41,16 +41,22 @@
     }
 
     var validateChecksum = typeof validateChecksum === 'undefined' || validateChecksum
+    var requireChecksum = typeof requireChecksum === 'undefined' || requireChecksum
 
-    if ((sentence.charAt(0) == '$' || sentence.charAt(0) == '!') && (validateChecksum == false || sentence.charAt(sentence.length - 3) == '*')) {
+    if ((sentence.charAt(0) == '$' || sentence.charAt(0) == '!')
+      && (validateChecksum == false || sentence.endsWith('*') || sentence.charAt(sentence.length - 3) == '*')) {
       if ( validateChecksum ) {
         var check = 0;
         var split = sentence.split('*');
-        
+
+        if (!requireChecksum && split[1] === '') {
+          return true
+        }
+
         for (var i = 1; i < split[0].length; i++) {
           check = check ^ split[0].charCodeAt(i);
         };
-        
+
         return (parseInt(split[1], 16) == check);
       } else {
         return true
@@ -87,7 +93,7 @@
     if(inputFormat == 'nm') {
       if(outputFormat == 'km') return value / utils.RATIOS.KM_IN_NM;
     }
-    
+
     // KNOTS
     if(inputFormat == 'knots') {
       if(outputFormat == 'kph') return value / utils.RATIOS.KPH_IN_KNOTS;
@@ -124,11 +130,11 @@
     if(inputFormat == 'rad') {
       if(outputFormat == 'deg') return value / utils.RATIOS.DEG_IN_RAD;
     }
-    
+
     if(inputFormat == 'c') {
       if(outputFormat == 'k') return value + utils.RATIOS.CELCIUS_IN_KELVIN;
     }
-    
+
     if(inputFormat == 'k') {
       if(outputFormat == 'c') return value - utils.RATIOS.CELCIUS_IN_KELVIN;
     }
@@ -173,7 +179,7 @@
       // HACK copied from jamesp/node-nmea
       if(year < 73) {
         year = this.int("20" + year);
-      } else { 
+      } else {
         year = this.int("19" + year);
       }
     } else {
@@ -199,7 +205,7 @@
     //
     // 52°22'19.662'' N -> 52.372128333
     // 4°54'34.944'' E -> 4.909706667
-    // S & W should be negative. 
+    // S & W should be negative.
 
     pole = pole.toUpperCase();
 
@@ -211,7 +217,7 @@
     if (pole == "S" || pole == "W") {
       decimal *= -1;
     }
-    
+
     return exports.float(decimal);
   };
 
