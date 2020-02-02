@@ -86,6 +86,7 @@
     // NM
     if(inputFormat == 'nm') {
       if(outputFormat == 'km') return value / utils.RATIOS.KM_IN_NM;
+      if(outputFormat == 'm') return value * 1000 / utils.RATIOS.KM_IN_NM ;
     }
     
     // KNOTS
