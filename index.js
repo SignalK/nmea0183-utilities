@@ -63,16 +63,18 @@
   exports.checksummedSentence = function(sentence, recalculateChecksum) {
     var sentence = String(sentence).trim();
 
-    var recalculateChecksum =  typeof recalculateChecksum === 'undefined' || recalculateChecksum;
-    
-    if ((sentence.charAt(0) == '$' || sentence.charAt(0) == '!') && (recalculateChecksum == true)) {
+    if ( typeof recalculateChecksum === 'undefined' || recalculateChecksum == false){
+      return sentence;
+    }
+   
+    if (sentence.charAt(0) == '$' || sentence.charAt(0) == '!') {
       var check = 0;
       var split = sentence.split('*');
       
       for (var i = 1; i < split[0].length; i++) {
         check = check ^ split[0].charCodeAt(i);
       };
-        return split[0].concat('*').concat(check.toString(16).toUpperCase());      
+        return split[0].concat('*').concat(check.toString(16).padStart(2, '0').toUpperCase());      
     }
     return sentence;
   };

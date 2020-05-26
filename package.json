@@ -21,6 +21,11 @@
     "signalk"
   ],
   "author": "Fabian Tollenaar <fabian@decipher.industries>",
+  "contributors": [
+    {
+      "name": "Marcel Verpaalen",
+      "email": "marcel@verpaalen.com"
+    }],
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/SignalK/nmea0183-utilities/issues"
