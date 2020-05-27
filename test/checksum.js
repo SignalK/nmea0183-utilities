@@ -34,4 +34,20 @@ describe('CheckSum', function () {
         done();
     });
 
+
+    it('Checksum is valid', function (done) {
+        expect(utils.valid('!GPGGA,000000.00,5253.164,N,00539.655,E,0,00,99.9,,M,,M,,*6F',true)).to.equal(true);
+        done();
+    });
+
+    it('Checksum is invalid', function (done) {
+        expect(utils.valid(sentence4,true)).to.equal(false);
+        done();
+    });
+
+    it('Checksum is invalid but should not be checked', function (done) {
+        expect(utils.valid(sentence4,false)).to.equal(true);
+        done();
+    });
+
 });
