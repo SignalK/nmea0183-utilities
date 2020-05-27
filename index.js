@@ -34,8 +34,8 @@
   };
 
   function checksum(sentencePart) {
-    var check = 0;
-    for (var i = 1; i < sentencePart.length; i++) {
+    let check = 0;
+    for (let i = 1; i < sentencePart.length; i++) {
       check = check ^ sentencePart.charCodeAt(i);
     };
     return check;
@@ -52,8 +52,7 @@
 
     if ((sentence.charAt(0) == '$' || sentence.charAt(0) == '!') && (validateChecksum == false || sentence.charAt(sentence.length - 3) == '*')) {
       if (validateChecksum) {
-        var check = 0;
-        var split = sentence.split('*');
+        let split = sentence.split('*');
         return (parseInt(split[1], 16) == checksum(split[0]));
       } else {
         return true
@@ -63,10 +62,9 @@
   };
 
   exports.appendChecksum = function (sentence) {
-    var split = sentence.split('*');
+    let split = String(sentence).trim().split('*');
     if (split.length === 1) {
-      var sentence = String(sentence).trim();
-      if (sentence.charAt(0) == '$' || sentence.charAt(0) == '!') {
+      if (split[0].charAt(0) == '$' || split[0].charAt(0) == '!') {
         return split[0].concat('*').concat(checksum(split[0]).toString(16).padStart(2, '0').toUpperCase());
       }
     }
