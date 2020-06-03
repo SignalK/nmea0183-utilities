@@ -1,6 +1,6 @@
 'use strict';
 
-(function() {
+(function () {
 
   var utils = {};
 
@@ -33,7 +33,15 @@
     CELCIUS_IN_KELVIN: 273.15,
   };
 
-  exports.valid = function(sentence, validateChecksum) {
+  function checksum(sentencePart) {
+    let check = 0;
+    for (let i = 1; i < sentencePart.length; i++) {
+      check = check ^ sentencePart.charCodeAt(i);
+    };
+    return check;
+  }
+
+  exports.valid = function (sentence, validateChecksum) {
     sentence = String(sentence).trim();
 
     if (sentence === "") {
@@ -43,24 +51,27 @@
     var validateChecksum = typeof validateChecksum === 'undefined' || validateChecksum
 
     if ((sentence.charAt(0) == '$' || sentence.charAt(0) == '!') && (validateChecksum == false || sentence.charAt(sentence.length - 3) == '*')) {
-      if ( validateChecksum ) {
-        var check = 0;
-        var split = sentence.split('*');
-        
-        for (var i = 1; i < split[0].length; i++) {
-          check = check ^ split[0].charCodeAt(i);
-        };
-        
-        return (parseInt(split[1], 16) == check);
+      if (validateChecksum) {
+        let split = sentence.split('*');
+        return (parseInt(split[1], 16) == checksum(split[0]));
       } else {
         return true
       }
     }
-
     return false;
   };
 
-  exports.source = function(sentence) {
+  exports.appendChecksum = function (sentence) {
+    let split = String(sentence).trim().split('*');
+    if (split.length === 1) {
+      if (split[0].charAt(0) == '$' || split[0].charAt(0) == '!') {
+        return split[0].concat('*').concat(checksum(split[0]).toString(16).padStart(2, '0').toUpperCase());
+      }
+    }
+    return sentence;
+  };
+
+  exports.source = function (sentence) {
     return {
       type: 'NMEA0183',
       label: 'signalk-parser-nmea0183',
@@ -68,92 +79,92 @@
     };
   };
 
-  exports.transform = function(value, inputFormat, outputFormat) {
+  exports.transform = function (value, inputFormat, outputFormat) {
     value = exports.float(value);
 
-    inputFormat  = inputFormat.toLowerCase();
+    inputFormat = inputFormat.toLowerCase();
     outputFormat = outputFormat.toLowerCase();
 
-    if(inputFormat === outputFormat) {
+    if (inputFormat === outputFormat) {
       return value;
     }
 
     // KM
-    if(inputFormat == 'km') {
-      if(outputFormat == 'nm') return value / utils.RATIOS.NM_IN_KM;
+    if (inputFormat == 'km') {
+      if (outputFormat == 'nm') return value / utils.RATIOS.NM_IN_KM;
     }
 
     // NM
-    if(inputFormat == 'nm') {
-      if(outputFormat == 'km') return value / utils.RATIOS.KM_IN_NM;
-      if(outputFormat == 'm') return value * 1000 / utils.RATIOS.KM_IN_NM ;
+    if (inputFormat == 'nm') {
+      if (outputFormat == 'km') return value / utils.RATIOS.KM_IN_NM;
+      if (outputFormat == 'm') return value * 1000 / utils.RATIOS.KM_IN_NM;
     }
-    
+
     // KNOTS
-    if(inputFormat == 'knots') {
-      if(outputFormat == 'kph') return value / utils.RATIOS.KPH_IN_KNOTS;
-      if(outputFormat == 'ms') return value / utils.RATIOS.MS_IN_KNOTS;
-      if(outputFormat == 'mph') return value / utils.RATIOS.MPH_IN_KNOTS;
+    if (inputFormat == 'knots') {
+      if (outputFormat == 'kph') return value / utils.RATIOS.KPH_IN_KNOTS;
+      if (outputFormat == 'ms') return value / utils.RATIOS.MS_IN_KNOTS;
+      if (outputFormat == 'mph') return value / utils.RATIOS.MPH_IN_KNOTS;
     }
 
     // KPH
-    if(inputFormat == 'kph') {
-      if(outputFormat == 'knots') return value / utils.RATIOS.KNOTS_IN_KPH;
-      if(outputFormat == 'ms') return value / utils.RATIOS.MS_IN_KPH;
-      if(outputFormat == 'mph') return value / utils.RATIOS.MPH_IN_KPH;
+    if (inputFormat == 'kph') {
+      if (outputFormat == 'knots') return value / utils.RATIOS.KNOTS_IN_KPH;
+      if (outputFormat == 'ms') return value / utils.RATIOS.MS_IN_KPH;
+      if (outputFormat == 'mph') return value / utils.RATIOS.MPH_IN_KPH;
     }
 
     // MPH
-    if(inputFormat == 'mph') {
-      if(outputFormat == 'knots') return value / utils.RATIOS.KNOTS_IN_MPH;
-      if(outputFormat == 'ms') return value / utils.RATIOS.MS_IN_MPH;
-      if(outputFormat == 'kph') return value / utils.RATIOS.KPH_IN_MPH;
+    if (inputFormat == 'mph') {
+      if (outputFormat == 'knots') return value / utils.RATIOS.KNOTS_IN_MPH;
+      if (outputFormat == 'ms') return value / utils.RATIOS.MS_IN_MPH;
+      if (outputFormat == 'kph') return value / utils.RATIOS.KPH_IN_MPH;
     }
 
     // MS
-    if(inputFormat == 'ms') {
-      if(outputFormat == 'knots') return value / utils.RATIOS.KNOTS_IN_MS;
-      if(outputFormat == 'mph') return value / utils.RATIOS.MPH_IN_MS;
-      if(outputFormat == 'kph') return value / utils.RATIOS.KPH_IN_MS;
+    if (inputFormat == 'ms') {
+      if (outputFormat == 'knots') return value / utils.RATIOS.KNOTS_IN_MS;
+      if (outputFormat == 'mph') return value / utils.RATIOS.MPH_IN_MS;
+      if (outputFormat == 'kph') return value / utils.RATIOS.KPH_IN_MS;
     }
 
     // ANGLES
-    if(inputFormat == 'deg') {
-      if(outputFormat == 'rad') return value / utils.RATIOS.RAD_IN_DEG;
+    if (inputFormat == 'deg') {
+      if (outputFormat == 'rad') return value / utils.RATIOS.RAD_IN_DEG;
     }
 
-    if(inputFormat == 'rad') {
-      if(outputFormat == 'deg') return value / utils.RATIOS.DEG_IN_RAD;
+    if (inputFormat == 'rad') {
+      if (outputFormat == 'deg') return value / utils.RATIOS.DEG_IN_RAD;
     }
-    
-    if(inputFormat == 'c') {
-      if(outputFormat == 'k') return value + utils.RATIOS.CELCIUS_IN_KELVIN;
+
+    if (inputFormat == 'c') {
+      if (outputFormat == 'k') return value + utils.RATIOS.CELCIUS_IN_KELVIN;
     }
-    
-    if(inputFormat == 'k') {
-      if(outputFormat == 'c') return value - utils.RATIOS.CELCIUS_IN_KELVIN;
+
+    if (inputFormat == 'k') {
+      if (outputFormat == 'c') return value - utils.RATIOS.CELCIUS_IN_KELVIN;
     }
 
     // Just return input if input/output formats are not recognised.
     return value;
   };
 
-  exports.magneticVariaton = function(degrees, pole) {
+  exports.magneticVariaton = function (degrees, pole) {
     pole = pole.toUpperCase();
     degrees = this.float(degrees);
 
-    if(pole == "S" || pole == "W") {
+    if (pole == "S" || pole == "W") {
       degrees *= -1;
     }
 
     return degrees;
   };
 
-  exports.timestamp = function(time, date) {
+  exports.timestamp = function (time, date) {
     /* TIME (UTC) */
     var hours, minutes, seconds, year, month, day;
 
-    if(time) {
+    if (time) {
       hours = this.int(time.slice(0, 2), true);
       minutes = this.int(time.slice(2, 4), true);
       seconds = this.int(time.slice(4, 6), true);
@@ -165,16 +176,16 @@
     }
 
     /* DATE (UTC) */
-    if(date) {
+    if (date) {
       var year, month, day;
       day = this.int(date.slice(0, 2), true);
       month = this.int(date.slice(2, 4), true);
       year = this.int(date.slice(-2));
 
       // HACK copied from jamesp/node-nmea
-      if(year < 73) {
+      if (year < 73) {
         year = this.int("20" + year);
-      } else { 
+      } else {
         year = this.int("19" + year);
       }
     } else {
@@ -189,7 +200,7 @@
     return d.toISOString();
   };
 
-  exports.coordinate = function(value, pole) {
+  exports.coordinate = function (value, pole) {
     // N 5222.3277 should be read as 52°22.3277'
     // E 454.5824 should be read as 4°54.5824'
     //
@@ -204,47 +215,47 @@
 
     pole = pole.toUpperCase();
 
-    var split   = value.split('.');
+    var split = value.split('.');
     var degrees = this.float(split[0].slice(0, -2));
-    var minsec  = this.float(split[0].slice(-2) + '.' + split[1]);
+    var minsec = this.float(split[0].slice(-2) + '.' + split[1]);
     var decimal = this.float(degrees + (minsec / 60));
 
     if (pole == "S" || pole == "W") {
       decimal *= -1;
     }
-    
+
     return exports.float(decimal);
   };
 
-  exports.zero = function(n) {
-    if(this.float(n) < 10) {
+  exports.zero = function (n) {
+    if (this.float(n) < 10) {
       return "0" + n;
     } else {
       return "" + n;
     }
   };
 
-  exports.int = function(n) {
-    if(("" + n).trim() === '') {
+  exports.int = function (n) {
+    if (("" + n).trim() === '') {
       return 0;
     } else {
       return parseInt(n, 10);
     }
   };
 
-  exports.integer = function(n) {
+  exports.integer = function (n) {
     return exports.int(n);
   };
 
-  exports.float = function(n) {
-    if(("" + n).trim() === '') {
+  exports.float = function (n) {
+    if (("" + n).trim() === '') {
       return 0.0;
     } else {
       return parseFloat(n);
     }
   };
 
-  exports.double = function(n) {
+  exports.double = function (n) {
     return exports.float(n);
   };
 
