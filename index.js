@@ -181,13 +181,7 @@
       day = this.int(date.slice(0, 2), true);
       month = this.int(date.slice(2, 4), true);
       year = this.int(date.slice(-2));
-
-      // HACK copied from jamesp/node-nmea
-      if (year < 73) {
-        year = this.int("20" + year);
-      } else {
-        year = this.int("19" + year);
-      }
+      year = 2000 + year;
     } else {
       var dt = new Date();
       year = dt.getUTCFullYear();
@@ -211,7 +205,7 @@
     //
     // 52°22'19.662'' N -> 52.372128333
     // 4°54'34.944'' E -> 4.909706667
-    // S & W should be negative. 
+    // S & W should be negative.
 
     pole = pole.toUpperCase();
 
