@@ -143,6 +143,7 @@
 
     if (inputFormat == 'k') {
       if (outputFormat == 'c') return value - utils.RATIOS.CELCIUS_IN_KELVIN;
+      if (outputFormat == 'f') return (1.8 * (value - 273)) + 32;
     }
 
     // Just return input if input/output formats are not recognised.
