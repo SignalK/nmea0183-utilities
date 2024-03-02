@@ -31,6 +31,9 @@
     // TEMPERATURES
     // Celcius
     CELCIUS_IN_KELVIN: 273.15,
+    // Length
+    METER_IN_FEET: 3.2808,
+    METER_IN_FATHOM: 0.5468,
   };
 
   function checksum(sentencePart) {
@@ -145,7 +148,14 @@
       if (outputFormat == 'c') return value - utils.RATIOS.CELCIUS_IN_KELVIN;
       if (outputFormat == 'f') return (1.8 * (value - 273)) + 32;
     }
+    // LENGTH
+    if (inputFormat == 'ft') {
+      if (outputFormat == 'm') return value / utils.RATIOS.METER_IN_FEET;
+    }
 
+    if (inputFormat == 'fa') {
+      if (outputFormat == 'm') return value / utils.RATIOS.METER_IN_FATHOM;
+    }
     // Just return input if input/output formats are not recognised.
     return value;
   };
