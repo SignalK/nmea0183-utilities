@@ -147,4 +147,18 @@ describe('Transform', function() {
     done()
   });
 
+  it('MBAR -> PASCAL', function(done) {
+    var value = utils.transform(1000, 'mbar', 'Pa');
+    expect(value).to.be.a('number');
+    expect(value).to.equal(100000);
+    done()
+  });
+
+  it('hectoPASCAL -> PASCAL', function(done) {
+    var value = utils.transform(1000, 'hPa', 'Pa');
+    expect(value).to.be.a('number');
+    expect(value).to.equal(100000);
+    done()
+  });
+
 });
