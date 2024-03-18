@@ -34,6 +34,10 @@
     // Length
     METER_IN_FEET: 3.2808,
     METER_IN_FATHOM: 0.5468,
+    // Pressure
+    MBAR_IN_PASCAL: 100,
+    BAR_IN_PASCAL: 100000,
+    HECTOPASCAL_IN_PASCAL: 100,
   };
 
   function checksum(sentencePart) {
@@ -156,6 +160,20 @@
     if (inputFormat == 'fa') {
       if (outputFormat == 'm') return value / utils.RATIOS.METER_IN_FATHOM;
     }
+
+    // PRESSURE
+    if (inputFormat == 'hpa') {
+      if (outputFormat == 'pa') return value * utils.RATIOS.HECTOPASCAL_IN_PASCAL;
+    }
+
+    if (inputFormat == 'mbar') {
+      if (outputFormat == 'pa') return value * utils.RATIOS.MBAR_IN_PASCAL;
+    }
+    
+    if (inputFormat == 'bar') {
+      if (outputFormat == 'pa') return value * utils.RATIOS.BAR_IN_PASCAL;
+    }
+
     // Just return input if input/output formats are not recognised.
     return value;
   };
