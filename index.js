@@ -190,18 +190,18 @@
     if (date) {
       var year, month, day;
       day = this.int(date.slice(0, 2), true);
-      month = this.int(date.slice(2, 4), true);
-      year = this.int(date.slice(-2));
+      month = this.int(date.slice(2, 4), true); // this will be a value 1-12
+      year = this.int(date.slice(4, 6), true);
       year = 2000 + year;
     } else {
       var dt = new Date();
       year = dt.getUTCFullYear();
-      month = dt.getUTCMonth();
+      month = dt.getUTCMonth() + 1; // getUTCMonth() returns 0-11
       day = dt.getUTCDate();
     }
 
     /* construct */
-    var d = new Date(Date.UTC(year, (month - 1), day, hours, minutes, seconds));
+    var d = new Date(Date.UTC(year, (month - 1), day, hours, minutes, seconds)); // month is expected to be 0-11
     return d.toISOString();
   };
 
@@ -230,6 +230,18 @@
     }
 
     return exports.float(decimal);
+  };
+
+  exports.isValidPosition = function (latitude, longitude) {
+    if (
+      typeof latitude !== "number" ||
+      typeof longitude !== "number" ||
+      Math.abs(latitude) > 90 ||
+      Math.abs(longitude) > 180
+    ) {
+      return false;
+    }
+    return true;
   };
 
   exports.zero = function (n) {
