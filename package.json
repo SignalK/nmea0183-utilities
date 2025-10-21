@@ -1,10 +1,13 @@
 {
   "name": "@signalk/nmea0183-utilities",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "Various utilities for transforming NMEA0183 units into SI units for use in SK.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "prettier:check": "prettier --check .",
+    "prettier": "prettier --write .",
+    "format": "npm run prettier"
   },
   "repository": {
     "type": "git",
@@ -13,7 +16,8 @@
   "devDependencies": {
     "chai": "~2.1.2",
     "chai-things": "~0.2.0",
-    "mocha": "^2.1.0"
+    "mocha": "^2.1.0",
+    "prettier": "3.6.2"
   },
   "keywords": [
     "nmea",
