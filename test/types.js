@@ -60,4 +60,40 @@ describe('Types', function () {
     expect(utils.zero(-15)).to.equal('-15')
     done()
   })
+
+  // zero() handles the n >= 10 branch (no leading zero).
+  it('Exports.zero(42) should return "42" without padding', function (done) {
+    expect(utils.zero(42)).to.equal('42')
+    done()
+  })
+
+  it('Exports.zero(100) should return "100" without padding', function (done) {
+    expect(utils.zero(100)).to.equal('100')
+    done()
+  })
+
+  // The empty-string / whitespace path in int/float — previously only
+  // exercised through higher-level timestamp parsing.
+  it('int returns 0 for empty string and whitespace', function (done) {
+    expect(utils.int('')).to.equal(0)
+    expect(utils.int('  ')).to.equal(0)
+    done()
+  })
+
+  it('float returns 0 for empty string and whitespace', function (done) {
+    expect(utils.float('')).to.equal(0)
+    expect(utils.float('  ')).to.equal(0)
+    done()
+  })
+
+  // Alias coverage: integer / double mirror int / float.
+  it('integer is an alias for int', function (done) {
+    expect(utils.integer('42')).to.equal(utils.int('42'))
+    done()
+  })
+
+  it('double is an alias for float', function (done) {
+    expect(utils.double('3.14')).to.equal(utils.float('3.14'))
+    done()
+  })
 })

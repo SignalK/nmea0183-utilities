@@ -17,6 +17,13 @@ describe('Transform', function () {
     done()
   })
 
+  it('NM -> M', function (done) {
+    var value = utils.transform(1, 'nm', 'm')
+    expect(value).to.be.a('number')
+    expect(value).to.be.closeTo(1852, 1e-3)
+    done()
+  })
+
   // KTS
   it('KTS -> KPH', function (done) {
     var value = utils.transform(1, 'knots', 'kph')
@@ -307,6 +314,20 @@ describe('Transform', function () {
     expect(function () {
       utils.transform(10, 'knots', 'kmh')
     }).to.throw(/unsupported conversion/i)
+    done()
+  })
+
+  // Same-unit fast path and mixed-case unit strings.
+  it('same-unit fast path returns the numeric value unchanged', function (done) {
+    expect(utils.transform(42, 'm', 'm')).to.equal(42)
+    expect(utils.transform('42.5', 'knots', 'knots')).to.equal(42.5)
+    done()
+  })
+
+  it('accepts uppercase unit strings', function (done) {
+    expect(utils.transform(1, 'KNOTS', 'MS')).to.equal(
+      utils.transform(1, 'knots', 'ms')
+    )
     done()
   })
 })
