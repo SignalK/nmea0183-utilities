@@ -119,17 +119,49 @@ describe('Transform', function () {
     done()
   })
 
-  it('CELCIUS -> KELVIN', function (done) {
+  // Celsius <-> Kelvin, using the three well-known fixed points:
+  //   0 K       = -273.15 C  (absolute zero)
+  //   273.15 K  =  0 C       (water freezes)
+  //   373.15 K  =  100 C     (water boils at 1 atm)
+  it('CELSIUS -> KELVIN (water freezing)', function (done) {
     var value = utils.transform(0, 'c', 'k')
     expect(value).to.be.a('number')
-    expect(value).to.equal(273.15)
+    expect(value).to.be.closeTo(273.15, 1e-9)
     done()
   })
 
-  it('KELVIN -> CELCIUS', function (done) {
+  it('CELSIUS -> KELVIN (water boiling)', function (done) {
+    var value = utils.transform(100, 'c', 'k')
+    expect(value).to.be.a('number')
+    expect(value).to.be.closeTo(373.15, 1e-9)
+    done()
+  })
+
+  it('CELSIUS -> KELVIN (absolute zero)', function (done) {
+    var value = utils.transform(-273.15, 'c', 'k')
+    expect(value).to.be.a('number')
+    expect(value).to.be.closeTo(0, 1e-9)
+    done()
+  })
+
+  it('KELVIN -> CELSIUS (water freezing)', function (done) {
+    var value = utils.transform(273.15, 'k', 'c')
+    expect(value).to.be.a('number')
+    expect(value).to.be.closeTo(0, 1e-9)
+    done()
+  })
+
+  it('KELVIN -> CELSIUS (water boiling)', function (done) {
+    var value = utils.transform(373.15, 'k', 'c')
+    expect(value).to.be.a('number')
+    expect(value).to.be.closeTo(100, 1e-9)
+    done()
+  })
+
+  it('KELVIN -> CELSIUS (absolute zero)', function (done) {
     var value = utils.transform(0, 'k', 'c')
     expect(value).to.be.a('number')
-    expect(value).to.equal(-273.15)
+    expect(value).to.be.closeTo(-273.15, 1e-9)
     done()
   })
 
