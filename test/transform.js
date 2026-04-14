@@ -225,4 +225,88 @@ describe('Transform', function () {
     expect(value).to.equal(18.288222384784202)
     done()
   })
+
+  // Celsius <-> Fahrenheit (previously missing — transform silently
+  // returned the input unchanged).
+  it('CELSIUS -> FAHRENHEIT (water freezing)', function (done) {
+    var value = utils.transform(0, 'c', 'f')
+    expect(value).to.be.a('number')
+    expect(value).to.be.closeTo(32, 1e-9)
+    done()
+  })
+
+  it('CELSIUS -> FAHRENHEIT (water boiling)', function (done) {
+    var value = utils.transform(100, 'c', 'f')
+    expect(value).to.be.a('number')
+    expect(value).to.be.closeTo(212, 1e-9)
+    done()
+  })
+
+  it('FAHRENHEIT -> CELSIUS (water freezing)', function (done) {
+    var value = utils.transform(32, 'f', 'c')
+    expect(value).to.be.a('number')
+    expect(value).to.be.closeTo(0, 1e-9)
+    done()
+  })
+
+  it('FAHRENHEIT -> CELSIUS (water boiling)', function (done) {
+    var value = utils.transform(212, 'f', 'c')
+    expect(value).to.be.a('number')
+    expect(value).to.be.closeTo(100, 1e-9)
+    done()
+  })
+
+  // Distance base-unit pairs that were missing.
+  it('KM -> M', function (done) {
+    expect(utils.transform(1, 'km', 'm')).to.equal(1000)
+    done()
+  })
+
+  it('M -> KM', function (done) {
+    expect(utils.transform(1000, 'm', 'km')).to.equal(1)
+    done()
+  })
+
+  it('M -> NM', function (done) {
+    var value = utils.transform(1852, 'm', 'nm')
+    expect(value).to.be.closeTo(1, 1e-6)
+    done()
+  })
+
+  // Length: the inverse of the existing ft -> m / fa -> m pairs.
+  it('METERS -> FEET', function (done) {
+    var value = utils.transform(1, 'm', 'ft')
+    expect(value).to.be.closeTo(3.2808, 1e-4)
+    done()
+  })
+
+  it('METERS -> FATHOMS', function (done) {
+    var value = utils.transform(1, 'm', 'fa')
+    expect(value).to.be.closeTo(0.5468, 1e-4)
+    done()
+  })
+
+  // Unknown conversions must fail loudly. Previously transform silently
+  // returned the input for any unrecognised pair, giving callers wrong
+  // values with no signal.
+  it('throws on unknown input unit', function (done) {
+    expect(function () {
+      utils.transform(1, 'furlong', 'm')
+    }).to.throw(/unsupported conversion/i)
+    done()
+  })
+
+  it('throws on unknown output unit', function (done) {
+    expect(function () {
+      utils.transform(1, 'm', 'furlong')
+    }).to.throw(/unsupported conversion/i)
+    done()
+  })
+
+  it('throws on typo (kmh instead of kph)', function (done) {
+    expect(function () {
+      utils.transform(10, 'knots', 'kmh')
+    }).to.throw(/unsupported conversion/i)
+    done()
+  })
 })
