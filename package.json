@@ -5,15 +5,26 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
+    "coverage": "c8 --reporter=text --reporter=lcov npm test",
     "prettier:check": "prettier --check .",
     "prettier": "prettier --write .",
     "format": "npm run prettier"
+  },
+  "c8": {
+    "include": [
+      "index.js"
+    ],
+    "exclude": [
+      "test/**",
+      "coverage/**"
+    ]
   },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/SignalK/nmea0183-utilities.git"
   },
   "devDependencies": {
+    "c8": "^11.0.0",
     "chai": "^4.5.0",
     "mocha": "^11.7.5",
     "prettier": "3.8.2"

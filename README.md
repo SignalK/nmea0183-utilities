@@ -1,6 +1,8 @@
 ## NMEA0183-utilities
 
-[![Build Status](https://travis-ci.org/SignalK/nmea0183-utilities.svg)](https://travis-ci.org/SignalK/nmea0183-utilities)
+[![CI](https://github.com/SignalK/nmea0183-utilities/actions/workflows/ci.yml/badge.svg)](https://github.com/SignalK/nmea0183-utilities/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/@signalk/nmea0183-utilities.svg)](https://www.npmjs.com/package/@signalk/nmea0183-utilities)
+[![License](https://img.shields.io/npm/l/@signalk/nmea0183-utilities.svg)](https://github.com/SignalK/nmea0183-utilities/blob/master/LICENSE)
 
 Various utilities for transforming NMEA0183 units into SI units for use in Signal K.
 
