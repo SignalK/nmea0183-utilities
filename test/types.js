@@ -96,4 +96,59 @@ describe('Types', function () {
     expect(utils.double('3.14')).to.equal(utils.float('3.14'))
     done()
   })
+
+  // int/float should never return NaN. The existing empty-string branch
+  // returns 0, but null/undefined/non-numeric input previously fell
+  // through to parseInt/parseFloat and produced NaN, corrupting
+  // downstream numeric fields with no signal.
+  it('Exports.int(null) should return 0', function (done) {
+    expect(utils.int(null)).to.equal(0)
+    done()
+  })
+
+  it('Exports.int(undefined) should return 0', function (done) {
+    expect(utils.int(undefined)).to.equal(0)
+    done()
+  })
+
+  it('Exports.int("abc") should return 0', function (done) {
+    expect(utils.int('abc')).to.equal(0)
+    done()
+  })
+
+  it('Exports.int(NaN) should return 0', function (done) {
+    expect(utils.int(NaN)).to.equal(0)
+    done()
+  })
+
+  it('Exports.float(null) should return 0', function (done) {
+    expect(utils.float(null)).to.equal(0)
+    done()
+  })
+
+  it('Exports.float(undefined) should return 0', function (done) {
+    expect(utils.float(undefined)).to.equal(0)
+    done()
+  })
+
+  it('Exports.float("abc") should return 0', function (done) {
+    expect(utils.float('abc')).to.equal(0)
+    done()
+  })
+
+  it('Exports.float(NaN) should return 0', function (done) {
+    expect(utils.float(NaN)).to.equal(0)
+    done()
+  })
+
+  // Regression: valid numeric input must still round-trip.
+  it('Exports.int("42") should return 42', function (done) {
+    expect(utils.int('42')).to.equal(42)
+    done()
+  })
+
+  it('Exports.float("3.14") should return 3.14', function (done) {
+    expect(utils.float('3.14')).to.equal(3.14)
+    done()
+  })
 })
