@@ -31,4 +31,27 @@ describe('Magnetic Variation', function () {
     expect(W).to.be.below(0)
     done()
   })
+
+  // The original export name 'magneticVariaton' is a long-standing typo.
+  // 'magneticVariation' is the canonical spelling; both should resolve
+  // to the same implementation for the lifetime of the deprecation.
+  it('magneticVariation is exported as an alias for magneticVariaton', function (done) {
+    expect(utils.magneticVariation).to.be.a('function')
+    expect(utils.magneticVariation).to.equal(utils.magneticVariaton)
+    done()
+  })
+
+  it('magneticVariation(1, "N") returns a positive number', function (done) {
+    var n = utils.magneticVariation(1, 'N')
+    expect(n).to.be.a('number')
+    expect(n).to.be.above(0)
+    done()
+  })
+
+  it('magneticVariation(1, "W") returns a negative number', function (done) {
+    var w = utils.magneticVariation(1, 'W')
+    expect(w).to.be.a('number')
+    expect(w).to.be.below(0)
+    done()
+  })
 })

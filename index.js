@@ -211,7 +211,7 @@
 
   exports.magneticVariaton = function (degrees, pole) {
     pole = pole.toUpperCase()
-    degrees = this.float(degrees)
+    degrees = exports.float(degrees)
 
     if (pole == 'S' || pole == 'W') {
       degrees *= -1
@@ -219,6 +219,10 @@
 
     return degrees
   }
+
+  // Canonical spelling. `magneticVariaton` is a long-standing typo kept
+  // for backcompat; new code should prefer `magneticVariation`.
+  exports.magneticVariation = exports.magneticVariaton
 
   exports.timestamp = function (time, date) {
     /* TIME (UTC) */
