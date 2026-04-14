@@ -296,11 +296,14 @@
   }
 
   exports.zero = function (n) {
-    if (this.float(n) < 10) {
-      return '0' + n
-    } else {
-      return '' + n
+    var num = exports.float(n)
+    if (num < 0) {
+      return '-' + exports.zero(-num)
     }
+    if (num < 10) {
+      return '0' + n
+    }
+    return '' + n
   }
 
   exports.int = function (n) {
