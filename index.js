@@ -27,8 +27,8 @@
     DEG_IN_RAD: 0.0174532925,
     RAD_IN_DEG: 57.2957795,
     // TEMPERATURES
-    // Celcius
-    CELCIUS_IN_KELVIN: 273.15,
+    // Celsius
+    CELSIUS_IN_KELVIN: 273.15,
     // Length
     METER_IN_FEET: 3.2808,
     METER_IN_FATHOM: 0.5468
@@ -147,18 +147,18 @@
     }
 
     if (inputFormat == 'c') {
-      if (outputFormat == 'k') return value + utils.RATIOS.CELCIUS_IN_KELVIN
+      if (outputFormat == 'k') return value + utils.RATIOS.CELSIUS_IN_KELVIN
     }
 
     if (inputFormat == 'k') {
-      if (outputFormat == 'c') return value - utils.RATIOS.CELCIUS_IN_KELVIN
+      if (outputFormat == 'c') return value - utils.RATIOS.CELSIUS_IN_KELVIN
       if (outputFormat == 'f')
-        return (value - utils.RATIOS.CELCIUS_IN_KELVIN) * 1.8 + 32
+        return (value - utils.RATIOS.CELSIUS_IN_KELVIN) * 1.8 + 32
     }
 
     if (inputFormat == 'f') {
       if (outputFormat == 'k')
-        return (value - 32) / 1.8 + utils.RATIOS.CELCIUS_IN_KELVIN
+        return (value - 32) / 1.8 + utils.RATIOS.CELSIUS_IN_KELVIN
     }
     // LENGTH
     if (inputFormat == 'ft') {
