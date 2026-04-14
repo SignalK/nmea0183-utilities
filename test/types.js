@@ -32,4 +32,32 @@ describe('Types', function () {
     expect(utils.float('2.2')).to.be.equal(2.2)
     done()
   })
+
+  // zero() is a width-2 left-pad for non-negative numbers used by
+  // timestamp formatting. Previous implementation tested `n < 10` and
+  // blindly prefixed "0", which produced "0-5" for negatives.
+  it('Exports.zero(0) should equal "00"', function (done) {
+    expect(utils.zero(0)).to.equal('00')
+    done()
+  })
+
+  it('Exports.zero(9) should equal "09"', function (done) {
+    expect(utils.zero(9)).to.equal('09')
+    done()
+  })
+
+  it('Exports.zero(10) should equal "10"', function (done) {
+    expect(utils.zero(10)).to.equal('10')
+    done()
+  })
+
+  it('Exports.zero(-5) should equal "-05"', function (done) {
+    expect(utils.zero(-5)).to.equal('-05')
+    done()
+  })
+
+  it('Exports.zero(-15) should equal "-15"', function (done) {
+    expect(utils.zero(-15)).to.equal('-15')
+    done()
+  })
 })
