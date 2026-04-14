@@ -133,6 +133,53 @@ describe('Transform', function () {
     done()
   })
 
+  // Kelvin <-> Fahrenheit, using the three well-known fixed points so
+  // the coefficient, offset, and direction are all pinned:
+  //   0 K       = -459.67 F  (absolute zero)
+  //   273.15 K  =  32 F      (water freezes)
+  //   373.15 K  = 212 F      (water boils at 1 atm)
+  it('KELVIN -> FAHRENHEIT (absolute zero)', function (done) {
+    var value = utils.transform(0, 'k', 'f')
+    expect(value).to.be.a('number')
+    expect(value).to.be.closeTo(-459.67, 1e-9)
+    done()
+  })
+
+  it('KELVIN -> FAHRENHEIT (water freezing)', function (done) {
+    var value = utils.transform(273.15, 'k', 'f')
+    expect(value).to.be.a('number')
+    expect(value).to.be.closeTo(32, 1e-9)
+    done()
+  })
+
+  it('KELVIN -> FAHRENHEIT (water boiling)', function (done) {
+    var value = utils.transform(373.15, 'k', 'f')
+    expect(value).to.be.a('number')
+    expect(value).to.be.closeTo(212, 1e-9)
+    done()
+  })
+
+  it('FAHRENHEIT -> KELVIN (absolute zero)', function (done) {
+    var value = utils.transform(-459.67, 'f', 'k')
+    expect(value).to.be.a('number')
+    expect(value).to.be.closeTo(0, 1e-9)
+    done()
+  })
+
+  it('FAHRENHEIT -> KELVIN (water freezing)', function (done) {
+    var value = utils.transform(32, 'f', 'k')
+    expect(value).to.be.a('number')
+    expect(value).to.be.closeTo(273.15, 1e-9)
+    done()
+  })
+
+  it('FAHRENHEIT -> KELVIN (water boiling)', function (done) {
+    var value = utils.transform(212, 'f', 'k')
+    expect(value).to.be.a('number')
+    expect(value).to.be.closeTo(373.15, 1e-9)
+    done()
+  })
+
   it('FEET -> METERS', function (done) {
     var value = utils.transform(33, 'ft', 'm')
     expect(value).to.be.a('number')
