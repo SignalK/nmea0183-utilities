@@ -31,6 +31,23 @@ describe('IsValidPosition', function () {
     expect(utils.isValidPosition(1, -181)).to.be.false
     done()
   })
+
+  // `typeof NaN === 'number'` is true and `Math.abs(NaN) > 90` is false,
+  // so the old guard let NaN positions through as valid.
+  it('Should return "false" when latitude or longitude is NaN', function (done) {
+    expect(utils.isValidPosition(NaN, 0)).to.be.false
+    expect(utils.isValidPosition(0, NaN)).to.be.false
+    expect(utils.isValidPosition(NaN, NaN)).to.be.false
+    done()
+  })
+
+  it('Should return "false" when latitude or longitude is Infinity', function (done) {
+    expect(utils.isValidPosition(Infinity, 0)).to.be.false
+    expect(utils.isValidPosition(-Infinity, 0)).to.be.false
+    expect(utils.isValidPosition(0, Infinity)).to.be.false
+    expect(utils.isValidPosition(0, -Infinity)).to.be.false
+    done()
+  })
 })
 
 function testInvalidValue(invalidValue) {
