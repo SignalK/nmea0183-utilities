@@ -62,4 +62,24 @@ describe('CheckSum', function () {
     expect(utils.valid(sentence4, false)).to.equal(true)
     done()
   })
+
+  // valid() edge cases that weren't covered.
+  it('empty string is not valid', function (done) {
+    expect(utils.valid('', true)).to.equal(false)
+    expect(utils.valid('   ', true)).to.equal(false)
+    done()
+  })
+
+  it('sentence without $ or ! prefix is not valid', function (done) {
+    expect(
+      utils.valid('GPGGA,000000.00,5253.164,N,00539.655,E,0,00,99.9,,M,,M,,*6F')
+    ).to.equal(false)
+    done()
+  })
+
+  it('validateChecksum defaults to true when omitted', function (done) {
+    // sentence4 has an invalid checksum; default should reject.
+    expect(utils.valid(sentence4)).to.equal(false)
+    done()
+  })
 })
