@@ -245,9 +245,11 @@
   }
 
   exports.isValidPosition = function (latitude, longitude) {
+    // Number.isFinite rejects NaN and +/-Infinity. `typeof NaN === 'number'`
+    // is true, so the old `typeof` + Math.abs guard let NaN fall through.
     if (
-      typeof latitude !== 'number' ||
-      typeof longitude !== 'number' ||
+      !Number.isFinite(latitude) ||
+      !Number.isFinite(longitude) ||
       Math.abs(latitude) > 90 ||
       Math.abs(longitude) > 180
     ) {
