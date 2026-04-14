@@ -249,7 +249,8 @@ exports.int = function (n) {
   if (('' + n).trim() === '') {
     return 0
   }
-  return parseInt(n, 10)
+  const parsed = parseInt(n, 10)
+  return Number.isNaN(parsed) ? 0 : parsed
 }
 
 exports.integer = function (n) {
@@ -260,7 +261,8 @@ exports.float = function (n) {
   if (('' + n).trim() === '') {
     return 0.0
   }
-  return parseFloat(n)
+  const parsed = parseFloat(n)
+  return Number.isNaN(parsed) ? 0.0 : parsed
 }
 
 exports.double = function (n) {
