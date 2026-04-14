@@ -152,7 +152,13 @@
 
     if (inputFormat == 'k') {
       if (outputFormat == 'c') return value - utils.RATIOS.CELCIUS_IN_KELVIN
-      if (outputFormat == 'f') return 1.8 * (value - 273) + 32
+      if (outputFormat == 'f')
+        return (value - utils.RATIOS.CELCIUS_IN_KELVIN) * 1.8 + 32
+    }
+
+    if (inputFormat == 'f') {
+      if (outputFormat == 'k')
+        return (value - 32) / 1.8 + utils.RATIOS.CELCIUS_IN_KELVIN
     }
     // LENGTH
     if (inputFormat == 'ft') {
