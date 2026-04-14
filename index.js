@@ -101,12 +101,21 @@
     // KM
     if (inputFormat == 'km') {
       if (outputFormat == 'nm') return value / utils.RATIOS.NM_IN_KM
+      if (outputFormat == 'm') return value * 1000
     }
 
     // NM
     if (inputFormat == 'nm') {
       if (outputFormat == 'km') return value / utils.RATIOS.KM_IN_NM
       if (outputFormat == 'm') return (value * 1000) / utils.RATIOS.KM_IN_NM
+    }
+
+    // M
+    if (inputFormat == 'm') {
+      if (outputFormat == 'km') return value / 1000
+      if (outputFormat == 'nm') return (value / 1000) * utils.RATIOS.KM_IN_NM
+      if (outputFormat == 'ft') return value * utils.RATIOS.METER_IN_FEET
+      if (outputFormat == 'fa') return value * utils.RATIOS.METER_IN_FATHOM
     }
 
     // KNOTS
@@ -146,8 +155,10 @@
       if (outputFormat == 'deg') return value / utils.RATIOS.DEG_IN_RAD
     }
 
+    // TEMPERATURE
     if (inputFormat == 'c') {
       if (outputFormat == 'k') return value + utils.RATIOS.CELSIUS_IN_KELVIN
+      if (outputFormat == 'f') return value * 1.8 + 32
     }
 
     if (inputFormat == 'k') {
@@ -157,9 +168,11 @@
     }
 
     if (inputFormat == 'f') {
+      if (outputFormat == 'c') return (value - 32) / 1.8
       if (outputFormat == 'k')
         return (value - 32) / 1.8 + utils.RATIOS.CELSIUS_IN_KELVIN
     }
+
     // LENGTH
     if (inputFormat == 'ft') {
       if (outputFormat == 'm') return value / utils.RATIOS.METER_IN_FEET
@@ -168,8 +181,10 @@
     if (inputFormat == 'fa') {
       if (outputFormat == 'm') return value / utils.RATIOS.METER_IN_FATHOM
     }
-    // Just return input if input/output formats are not recognised.
-    return value
+
+    throw new Error(
+      'unsupported conversion: ' + inputFormat + ' -> ' + outputFormat
+    )
   }
 
   exports.magneticVariaton = function (degrees, pole) {
