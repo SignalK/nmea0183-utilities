@@ -14,9 +14,8 @@
     "url": "git+ssh://git@github.com/SignalK/nmea0183-utilities.git"
   },
   "devDependencies": {
-    "chai": "~2.1.2",
-    "chai-things": "~0.2.0",
-    "mocha": "^2.1.0",
+    "chai": "^4.5.0",
+    "mocha": "^11.7.5",
     "prettier": "3.8.2"
   },
   "keywords": [
