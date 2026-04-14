@@ -88,9 +88,111 @@
     }
   }
 
+  // Dispatch table: key = 'from:to', value = converter fn.
+  // Kept as a single source of truth so adding a new unit pair is
+  // one line here and a new test.
+  var CONVERSIONS = {
+    // Distance
+    'km:nm': function (v) {
+      return v / utils.RATIOS.NM_IN_KM
+    },
+    'km:m': function (v) {
+      return v * 1000
+    },
+    'nm:km': function (v) {
+      return v / utils.RATIOS.KM_IN_NM
+    },
+    'nm:m': function (v) {
+      return (v * 1000) / utils.RATIOS.KM_IN_NM
+    },
+    'm:km': function (v) {
+      return v / 1000
+    },
+    'm:nm': function (v) {
+      return (v / 1000) * utils.RATIOS.KM_IN_NM
+    },
+    'm:ft': function (v) {
+      return v * utils.RATIOS.METER_IN_FEET
+    },
+    'm:fa': function (v) {
+      return v * utils.RATIOS.METER_IN_FATHOM
+    },
+    'ft:m': function (v) {
+      return v / utils.RATIOS.METER_IN_FEET
+    },
+    'fa:m': function (v) {
+      return v / utils.RATIOS.METER_IN_FATHOM
+    },
+
+    // Speed
+    'knots:kph': function (v) {
+      return v / utils.RATIOS.KPH_IN_KNOTS
+    },
+    'knots:ms': function (v) {
+      return v / utils.RATIOS.MS_IN_KNOTS
+    },
+    'knots:mph': function (v) {
+      return v / utils.RATIOS.MPH_IN_KNOTS
+    },
+    'kph:knots': function (v) {
+      return v / utils.RATIOS.KNOTS_IN_KPH
+    },
+    'kph:ms': function (v) {
+      return v / utils.RATIOS.MS_IN_KPH
+    },
+    'kph:mph': function (v) {
+      return v / utils.RATIOS.MPH_IN_KPH
+    },
+    'mph:knots': function (v) {
+      return v / utils.RATIOS.KNOTS_IN_MPH
+    },
+    'mph:ms': function (v) {
+      return v / utils.RATIOS.MS_IN_MPH
+    },
+    'mph:kph': function (v) {
+      return v / utils.RATIOS.KPH_IN_MPH
+    },
+    'ms:knots': function (v) {
+      return v / utils.RATIOS.KNOTS_IN_MS
+    },
+    'ms:mph': function (v) {
+      return v / utils.RATIOS.MPH_IN_MS
+    },
+    'ms:kph': function (v) {
+      return v / utils.RATIOS.KPH_IN_MS
+    },
+
+    // Angle
+    'deg:rad': function (v) {
+      return v / utils.RATIOS.RAD_IN_DEG
+    },
+    'rad:deg': function (v) {
+      return v / utils.RATIOS.DEG_IN_RAD
+    },
+
+    // Temperature
+    'c:k': function (v) {
+      return v + utils.RATIOS.CELSIUS_IN_KELVIN
+    },
+    'c:f': function (v) {
+      return v * 1.8 + 32
+    },
+    'k:c': function (v) {
+      return v - utils.RATIOS.CELSIUS_IN_KELVIN
+    },
+    'k:f': function (v) {
+      return (v - utils.RATIOS.CELSIUS_IN_KELVIN) * 1.8 + 32
+    },
+    'f:c': function (v) {
+      return (v - 32) / 1.8
+    },
+    'f:k': function (v) {
+      return (v - 32) / 1.8 + utils.RATIOS.CELSIUS_IN_KELVIN
+    }
+  }
+
   exports.transform = function (value, inputFormat, outputFormat) {
     value = exports.float(value)
-
     inputFormat = inputFormat.toLowerCase()
     outputFormat = outputFormat.toLowerCase()
 
@@ -98,93 +200,13 @@
       return value
     }
 
-    // KM
-    if (inputFormat == 'km') {
-      if (outputFormat == 'nm') return value / utils.RATIOS.NM_IN_KM
-      if (outputFormat == 'm') return value * 1000
+    var converter = CONVERSIONS[inputFormat + ':' + outputFormat]
+    if (!converter) {
+      throw new Error(
+        'unsupported conversion: ' + inputFormat + ' -> ' + outputFormat
+      )
     }
-
-    // NM
-    if (inputFormat == 'nm') {
-      if (outputFormat == 'km') return value / utils.RATIOS.KM_IN_NM
-      if (outputFormat == 'm') return (value * 1000) / utils.RATIOS.KM_IN_NM
-    }
-
-    // M
-    if (inputFormat == 'm') {
-      if (outputFormat == 'km') return value / 1000
-      if (outputFormat == 'nm') return (value / 1000) * utils.RATIOS.KM_IN_NM
-      if (outputFormat == 'ft') return value * utils.RATIOS.METER_IN_FEET
-      if (outputFormat == 'fa') return value * utils.RATIOS.METER_IN_FATHOM
-    }
-
-    // KNOTS
-    if (inputFormat == 'knots') {
-      if (outputFormat == 'kph') return value / utils.RATIOS.KPH_IN_KNOTS
-      if (outputFormat == 'ms') return value / utils.RATIOS.MS_IN_KNOTS
-      if (outputFormat == 'mph') return value / utils.RATIOS.MPH_IN_KNOTS
-    }
-
-    // KPH
-    if (inputFormat == 'kph') {
-      if (outputFormat == 'knots') return value / utils.RATIOS.KNOTS_IN_KPH
-      if (outputFormat == 'ms') return value / utils.RATIOS.MS_IN_KPH
-      if (outputFormat == 'mph') return value / utils.RATIOS.MPH_IN_KPH
-    }
-
-    // MPH
-    if (inputFormat == 'mph') {
-      if (outputFormat == 'knots') return value / utils.RATIOS.KNOTS_IN_MPH
-      if (outputFormat == 'ms') return value / utils.RATIOS.MS_IN_MPH
-      if (outputFormat == 'kph') return value / utils.RATIOS.KPH_IN_MPH
-    }
-
-    // MS
-    if (inputFormat == 'ms') {
-      if (outputFormat == 'knots') return value / utils.RATIOS.KNOTS_IN_MS
-      if (outputFormat == 'mph') return value / utils.RATIOS.MPH_IN_MS
-      if (outputFormat == 'kph') return value / utils.RATIOS.KPH_IN_MS
-    }
-
-    // ANGLES
-    if (inputFormat == 'deg') {
-      if (outputFormat == 'rad') return value / utils.RATIOS.RAD_IN_DEG
-    }
-
-    if (inputFormat == 'rad') {
-      if (outputFormat == 'deg') return value / utils.RATIOS.DEG_IN_RAD
-    }
-
-    // TEMPERATURE
-    if (inputFormat == 'c') {
-      if (outputFormat == 'k') return value + utils.RATIOS.CELSIUS_IN_KELVIN
-      if (outputFormat == 'f') return value * 1.8 + 32
-    }
-
-    if (inputFormat == 'k') {
-      if (outputFormat == 'c') return value - utils.RATIOS.CELSIUS_IN_KELVIN
-      if (outputFormat == 'f')
-        return (value - utils.RATIOS.CELSIUS_IN_KELVIN) * 1.8 + 32
-    }
-
-    if (inputFormat == 'f') {
-      if (outputFormat == 'c') return (value - 32) / 1.8
-      if (outputFormat == 'k')
-        return (value - 32) / 1.8 + utils.RATIOS.CELSIUS_IN_KELVIN
-    }
-
-    // LENGTH
-    if (inputFormat == 'ft') {
-      if (outputFormat == 'm') return value / utils.RATIOS.METER_IN_FEET
-    }
-
-    if (inputFormat == 'fa') {
-      if (outputFormat == 'm') return value / utils.RATIOS.METER_IN_FATHOM
-    }
-
-    throw new Error(
-      'unsupported conversion: ' + inputFormat + ' -> ' + outputFormat
-    )
+    return converter(value)
   }
 
   exports.magneticVariaton = function (degrees, pole) {
