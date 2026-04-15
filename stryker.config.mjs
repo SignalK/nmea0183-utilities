@@ -17,11 +17,11 @@ export default {
   mochaOptions: {
     spec: ['test/*.js']
   },
-  // Fail the run (non-zero exit) if the mutation score drops below this.
-  // Starting value — tighten as surviving mutants get killed.
+  // Fail the run (non-zero exit) if the mutation score drops below
+  // `break`.
   thresholds: {
-    high: 95,
-    low: 80,
-    break: 75
+    high: 100,
+    low: 98,
+    break: 95
   }
 }

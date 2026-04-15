@@ -82,4 +82,72 @@ describe('CheckSum', function () {
     expect(utils.valid(sentence4)).to.equal(false)
     done()
   })
+
+  // valid() trims surrounding whitespace before parsing. A mutation
+  // that drops the .trim() would fail to match the leading/trailing
+  // chars and return false for an otherwise-valid sentence.
+  it('accepts valid sentence with surrounding whitespace', function (done) {
+    expect(
+      utils.valid(
+        '  !GPGGA,000000.00,5253.164,N,00539.655,E,0,00,99.9,,M,,M,,*6F  ',
+        true
+      )
+    ).to.equal(true)
+    done()
+  })
+
+  // appendChecksum also trims before inspecting the input.
+  it('appendChecksum strips surrounding whitespace before processing', function (done) {
+    expect(
+      utils.appendChecksum('  $GPBOD,045.,T,023.,M,DEST,START  ')
+    ).to.equal('$GPBOD,045.,T,023.,M,DEST,START*01')
+    done()
+  })
+
+  // Cover both leading-character variants explicitly. `validateChecksum=false`
+  // must accept both `$` and `!` prefixes even when the `*XX` suffix is absent.
+  it('validateChecksum=false accepts $-prefixed sentence without suffix', function (done) {
+    expect(utils.valid('$GPBOD,045.,T,023.,M,DEST,START', false)).to.equal(true)
+    done()
+  })
+
+  it('validateChecksum=false accepts !-prefixed sentence without suffix', function (done) {
+    expect(
+      utils.valid(
+        '!GPGGA,000000.00,5253.164,N,00539.655,E,0,00,99.9,,M,,M,,',
+        false
+      )
+    ).to.equal(true)
+    done()
+  })
+
+  // Rejects a prefix-matching sentence that lacks the *XX suffix when
+  // validateChecksum is defaulted to true.
+  it('default validateChecksum rejects $-prefixed sentence with no *XX suffix', function (done) {
+    expect(utils.valid('$GPBOD,045.,T,023.,M,DEST,START')).to.equal(false)
+    done()
+  })
+
+  // Rejects a checksum-valid sentence whose leading character is neither
+  // $ nor !. The body '#GPBOD,045.,T,023.,M,DEST,START*01' has a valid
+  // checksum (checksum iteration starts at index 1, so the leading char
+  // is ignored in computation, but the prefix check must still reject).
+  it('rejects a checksum-valid sentence with an invalid leading character', function (done) {
+    expect(utils.valid('#GPBOD,045.,T,023.,M,DEST,START*01', true)).to.equal(
+      false
+    )
+    done()
+  })
+
+  // Rejects a $-prefixed sentence whose body happens to have a valid
+  // checksum but whose '*' is not positioned at length-3 of the
+  // trimmed sentence. '$A*41XY' has length 7 (length-3 = 4 = '1'),
+  // but split('*') yields ['$A', '41XY'] and parseInt('41XY', 16) = 65,
+  // which equals the checksum of '$A' starting at index 1 ('A' = 65).
+  // A full split-and-validate would return true, but the positional
+  // check on '*' at length-3 must reject the sentence first.
+  it('rejects $-prefix + valid split-based checksum when * is not at length-3', function (done) {
+    expect(utils.valid('$A*41XY', true)).to.equal(false)
+    done()
+  })
 })

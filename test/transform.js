@@ -330,4 +330,14 @@ describe('Transform', function () {
     )
     done()
   })
+
+  // Pin the full error message format. A mutation that drops the
+  // ` -> ` separator (producing `furlongsmoot`) would slip past the
+  // looser regex assertions above.
+  it('throw message includes both units separated by " -> "', function (done) {
+    expect(function () {
+      utils.transform(1, 'furlong', 'smoot')
+    }).to.throw('unsupported conversion: furlong -> smoot')
+    done()
+  })
 })

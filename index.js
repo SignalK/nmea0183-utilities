@@ -43,11 +43,10 @@ function checksum(sentencePart) {
 }
 
 exports.valid = function (sentence, validateChecksum) {
+  // An empty string has charAt(0) === '', which neither equals '$' nor
+  // '!', so the prefix check below rejects it without a dedicated
+  // early return.
   sentence = String(sentence).trim()
-
-  if (sentence === '') {
-    return false
-  }
 
   const shouldValidate =
     typeof validateChecksum === 'undefined' || validateChecksum
@@ -246,9 +245,8 @@ exports.zero = function (n) {
 }
 
 exports.int = function (n) {
-  if (('' + n).trim() === '') {
-    return 0
-  }
+  // parseInt('') and parseInt('  ') both return NaN, so the NaN guard
+  // below subsumes the previous empty-string fast path.
   const parsed = parseInt(n, 10)
   return Number.isNaN(parsed) ? 0 : parsed
 }
@@ -258,9 +256,6 @@ exports.integer = function (n) {
 }
 
 exports.float = function (n) {
-  if (('' + n).trim() === '') {
-    return 0.0
-  }
   const parsed = parseFloat(n)
   return Number.isNaN(parsed) ? 0.0 : parsed
 }
