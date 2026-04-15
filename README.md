@@ -8,12 +8,12 @@ Various utilities for transforming NMEA0183 units into SI units for use in Signa
 
 # Installation
 
-`npm install nmea0183-utilities`
+`npm install @signalk/nmea0183-utilities`
 
 # Some examples
 
 ```javascript
-var utils = require('nmea0183-utilities')
+var utils = require('@signalk/nmea0183-utilities')
 
 // Transform 3 knots into m/s
 var ms = utils.transform(3, 'knots', 'ms')
