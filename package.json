@@ -6,6 +6,7 @@
   "scripts": {
     "test": "mocha",
     "coverage": "c8 --reporter=text --reporter=lcov npm test",
+    "mutate": "stryker run",
     "prettier:check": "prettier --check .",
     "prettier": "prettier --write .",
     "format": "npm run prettier"
@@ -24,6 +25,8 @@
     "url": "git+ssh://git@github.com/SignalK/nmea0183-utilities.git"
   },
   "devDependencies": {
+    "@stryker-mutator/core": "^9.6.1",
+    "@stryker-mutator/mocha-runner": "^9.6.1",
     "c8": "^11.0.0",
     "chai": "^4.5.0",
     "mocha": "^11.7.5",

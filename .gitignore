@@ -7,3 +7,7 @@ vessel.json
 # Test coverage
 coverage
 .nyc_output
+
+# Stryker mutation testing
+reports
+.stryker-tmp
