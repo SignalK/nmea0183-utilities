@@ -32,13 +32,35 @@ describe('Timestamp', function () {
     done()
   })
 
-  // Pin the current subsecond-truncation behavior. NMEA time fields carry
-  // hundredths (e.g. "173456.75"), but `time.slice(4, 6)` only picks up
-  // the integer seconds. The ISO output reports whole seconds with .000
-  // milliseconds. If a future change starts preserving hundredths, this
-  // test will fail and force a conscious decision.
-  it('truncates fractional seconds (documents current behavior)', function (done) {
+  // NMEA time fields may carry a fractional tail (e.g. "173456.75" = 750 ms).
+  // Fix for SignalK/nmea0183-utilities#36 — previously the tail was dropped
+  // and output always ended in .000Z.
+  it('preserves fractional seconds as milliseconds', function (done) {
     const value = utils.timestamp('173456.75', '050426')
+    expect(value).to.equal('2026-04-05T17:34:56.750Z')
+    done()
+  })
+
+  it('right-pads a single fractional digit (.2 -> 200 ms)', function (done) {
+    const value = utils.timestamp('173456.2', '050426')
+    expect(value).to.equal('2026-04-05T17:34:56.200Z')
+    done()
+  })
+
+  it('truncates beyond millisecond precision (.2567 -> 256 ms)', function (done) {
+    const value = utils.timestamp('173456.2567', '050426')
+    expect(value).to.equal('2026-04-05T17:34:56.256Z')
+    done()
+  })
+
+  it('treats a non-digit fractional tail as 0 ms', function (done) {
+    const value = utils.timestamp('173456.abc', '050426')
+    expect(value).to.equal('2026-04-05T17:34:56.000Z')
+    done()
+  })
+
+  it('treats an empty fractional tail as 0 ms', function (done) {
+    const value = utils.timestamp('173456.', '050426')
     expect(value).to.equal('2026-04-05T17:34:56.000Z')
     done()
   })

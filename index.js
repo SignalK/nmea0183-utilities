@@ -162,17 +162,26 @@ exports.magneticVariation = exports.magneticVariaton
 
 exports.timestamp = function (time, date) {
   /* TIME (UTC) */
-  let hours, minutes, seconds, year, month, day
+  let hours, minutes, seconds, milliseconds, year, month, day
 
   if (time) {
     hours = exports.int(time.slice(0, 2))
     minutes = exports.int(time.slice(2, 4))
     seconds = exports.int(time.slice(4, 6))
+    // NMEA time may carry a fractional tail (e.g. u-blox 10 Hz fixes arrive
+    // as '173456.75'). Capture up to 3 digits after the dot, right-padded,
+    // so '.2' -> 200, '.25' -> 250, '.2567' -> 256. Missing or non-digit
+    // tails degrade to 0 ms (keeps malformed-sentence handling unchanged).
+    const fraction = /\.(\d+)/.exec(time)
+    milliseconds = fraction
+      ? parseInt((fraction[1] + '000').slice(0, 3), 10)
+      : 0
   } else {
     const dt = new Date()
     hours = dt.getUTCHours()
     minutes = dt.getUTCMinutes()
     seconds = dt.getUTCSeconds()
+    milliseconds = 0
   }
 
   /* DATE (UTC) */
@@ -188,7 +197,9 @@ exports.timestamp = function (time, date) {
   }
 
   /* construct */
-  const d = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds)) // month is expected to be 0-11
+  const d = new Date(
+    Date.UTC(year, month - 1, day, hours, minutes, seconds, milliseconds)
+  ) // month is expected to be 0-11
   return d.toISOString()
 }
 
