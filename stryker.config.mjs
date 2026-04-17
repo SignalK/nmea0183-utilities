@@ -1,7 +1,7 @@
 /**
  * Stryker mutation-testing config.
  *
- * Run with `npm run mutate`. A mutation test mutates the source (index.js)
+ * Run with `npm run mutate`. A mutation test mutates the source (src/index.ts)
  * and runs the test suite against each mutant; any mutant that still lets
  * all tests pass is a "survived" mutant and flags a test gap.
  *
@@ -13,9 +13,9 @@ export default {
   testRunner: 'mocha',
   reporters: ['html', 'clear-text', 'progress'],
   coverageAnalysis: 'perTest',
-  mutate: ['index.js'],
+  mutate: ['src/**/*.ts'],
   mochaOptions: {
-    spec: ['test/*.js']
+    spec: ['test/**/*.ts']
   },
   // Fail the run (non-zero exit) if the mutation score drops below
   // `break`.

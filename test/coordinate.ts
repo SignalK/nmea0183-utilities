@@ -1,10 +1,9 @@
-var chai = require('chai')
-var expect = chai.expect
-var utils = require('../index')
+import { expect } from 'chai'
+import * as utils from '../src/index'
 
 describe('Coordinate', function () {
-  var N = utils.coordinate('5222.3277', 'N')
-  var W = utils.coordinate('454.5824', 'W')
+  const N = utils.coordinate('5222.3277', 'N')
+  const W = utils.coordinate('454.5824', 'W')
 
   it('Should be a string', function (done) {
     expect(N).to.be.a('number')

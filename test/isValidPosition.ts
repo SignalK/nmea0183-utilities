@@ -1,6 +1,5 @@
-var chai = require('chai')
-var expect = chai.expect
-var utils = require('../index')
+import { expect } from 'chai'
+import * as utils from '../src/index'
 
 describe('IsValidPosition', function () {
   it('Should return "true" for valid latitude and longitude', function (done) {
@@ -50,7 +49,7 @@ describe('IsValidPosition', function () {
   })
 })
 
-function testInvalidValue(invalidValue) {
+function testInvalidValue(invalidValue: unknown): void {
   expect(utils.isValidPosition(invalidValue, 22)).to.be.false
   expect(utils.isValidPosition(11, invalidValue)).to.be.false
   expect(utils.isValidPosition(invalidValue, invalidValue)).to.be.false
