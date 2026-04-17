@@ -2,22 +2,42 @@
   "name": "@signalk/nmea0183-utilities",
   "version": "0.12.0",
   "description": "Various utilities for transforming NMEA0183 units into SI units for use in SK.",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean",
+    "typecheck": "tsc --noEmit",
     "test": "mocha",
     "coverage": "c8 --reporter=text --reporter=lcov npm test",
     "mutation": "stryker run",
     "prettier:check": "prettier --check .",
     "prettier": "prettier --write .",
-    "format": "npm run prettier"
+    "format": "npm run prettier",
+    "prepublishOnly": "npm run build"
   },
   "c8": {
+    "extension": [
+      ".ts"
+    ],
     "include": [
-      "index.js"
+      "src/**/*.ts"
     ],
     "exclude": [
       "test/**",
-      "coverage/**"
+      "coverage/**",
+      "dist/**"
+    ],
+    "all": true,
+    "reporter": [
+      "text",
+      "lcov"
     ]
   },
   "repository": {
@@ -27,10 +47,16 @@
   "devDependencies": {
     "@stryker-mutator/core": "^9.6.1",
     "@stryker-mutator/mocha-runner": "^9.6.1",
+    "@types/chai": "^4.3.20",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.10.5",
     "c8": "^11.0.0",
     "chai": "^4.5.0",
     "mocha": "^11.7.5",
-    "prettier": "3.8.3"
+    "prettier": "3.8.3",
+    "rimraf": "^6.0.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
   },
   "keywords": [
     "nmea",

@@ -1,5 +1,6 @@
 # Ignore artifacts:
 build
+dist
 coverage
 reports
 .stryker-tmp
