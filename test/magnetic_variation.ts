@@ -1,12 +1,11 @@
-var chai = require('chai')
-var expect = chai.expect
-var utils = require('../index')
+import { expect } from 'chai'
+import * as utils from '../src/index'
 
 describe('Magnetic Variation', function () {
-  var N = utils.magneticVariaton(1, 'N')
-  var S = utils.magneticVariaton(1, 'S')
-  var E = utils.magneticVariaton(1, 'E')
-  var W = utils.magneticVariaton(1, 'S')
+  const N = utils.magneticVariaton(1, 'N')
+  const S = utils.magneticVariaton(1, 'S')
+  const E = utils.magneticVariaton(1, 'E')
+  const W = utils.magneticVariaton(1, 'S')
 
   it('N should be a positive number', function (done) {
     expect(N).to.be.a('number')
@@ -42,14 +41,14 @@ describe('Magnetic Variation', function () {
   })
 
   it('magneticVariation(1, "N") returns a positive number', function (done) {
-    var n = utils.magneticVariation(1, 'N')
+    const n = utils.magneticVariation(1, 'N')
     expect(n).to.be.a('number')
     expect(n).to.be.above(0)
     done()
   })
 
   it('magneticVariation(1, "W") returns a negative number', function (done) {
-    var w = utils.magneticVariation(1, 'W')
+    const w = utils.magneticVariation(1, 'W')
     expect(w).to.be.a('number')
     expect(w).to.be.below(0)
     done()

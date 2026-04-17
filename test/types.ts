@@ -1,6 +1,5 @@
-var chai = require('chai')
-var expect = chai.expect
-var utils = require('../index')
+import { expect } from 'chai'
+import * as utils from '../src/index'
 
 describe('Types', function () {
   it('Exports.zero(2) should be a string and equal "02"', function (done) {
