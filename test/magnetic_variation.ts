@@ -1,11 +1,12 @@
 import { expect } from 'chai'
 import * as utils from '../src/index'
+import type { Pole } from '../src/index'
 
 describe('Magnetic Variation', function () {
-  const N = utils.magneticVariaton(1, 'N')
-  const S = utils.magneticVariaton(1, 'S')
-  const E = utils.magneticVariaton(1, 'E')
-  const W = utils.magneticVariaton(1, 'S')
+  const N = utils.magneticVariation(1, 'N')
+  const S = utils.magneticVariation(1, 'S')
+  const E = utils.magneticVariation(1, 'E')
+  const W = utils.magneticVariation(1, 'W')
 
   it('N should be a positive number', function (done) {
     expect(N).to.be.a('number')
@@ -31,26 +32,21 @@ describe('Magnetic Variation', function () {
     done()
   })
 
-  // The original export name 'magneticVariaton' is a long-standing typo.
-  // 'magneticVariation' is the canonical spelling; both should resolve
-  // to the same implementation for the lifetime of the deprecation.
-  it('magneticVariation is exported as an alias for magneticVariaton', function (done) {
-    expect(utils.magneticVariation).to.be.a('function')
-    expect(utils.magneticVariation).to.equal(utils.magneticVariaton)
+  // Lowercase and other bogus pole letters throw. 1.0 dropped the runtime
+  // `.toUpperCase()` that used to paper over JS callers violating the
+  // `Pole` type; the failure mode for a southern-hemisphere sentence
+  // passed as `'s'` would be a silent wrong-sign result.
+  it('throws on lowercase pole letters', function (done) {
+    expect(function () {
+      utils.magneticVariation(1, 's' as Pole)
+    }).to.throw(/unsupported pole: s/)
     done()
   })
 
-  it('magneticVariation(1, "N") returns a positive number', function (done) {
-    const n = utils.magneticVariation(1, 'N')
-    expect(n).to.be.a('number')
-    expect(n).to.be.above(0)
-    done()
-  })
-
-  it('magneticVariation(1, "W") returns a negative number', function (done) {
-    const w = utils.magneticVariation(1, 'W')
-    expect(w).to.be.a('number')
-    expect(w).to.be.below(0)
+  it('throws on unknown pole letters', function (done) {
+    expect(function () {
+      utils.magneticVariation(1, 'X' as Pole)
+    }).to.throw(/unsupported pole: X/)
     done()
   })
 })

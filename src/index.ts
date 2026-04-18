@@ -56,7 +56,8 @@ export type UnitFormat =
   | 'k'
   | 'f'
 
-export type Pole = 'N' | 'S' | 'E' | 'W' | 'n' | 's' | 'e' | 'w'
+// NMEA 0183 cardinal direction letter. Uppercase only, per IEC 61162-1.
+export type Pole = 'N' | 'S' | 'E' | 'W'
 
 export interface SignalKSource {
   type: 'NMEA0183'
@@ -65,9 +66,14 @@ export interface SignalKSource {
 }
 
 function checksum(sentencePart: string): number {
+  // NMEA 0183 XOR checksum over every byte after the leading `$` or `!`.
+  // `for...of` avoids an explicit numeric bound so the loop can't be
+  // mutated into an off-by-one that reads NaN (which XORs as 0 and leaves
+  // the checksum unchanged — equivalent to the original, unkillable by a
+  // test). NMEA is ASCII, so iterating code points ≡ iterating code units.
   let check = 0
-  for (let i = 1; i < sentencePart.length; i++) {
-    check = check ^ sentencePart.charCodeAt(i)
+  for (const char of sentencePart.slice(1)) {
+    check ^= char.charCodeAt(0)
   }
   return check
 }
@@ -162,41 +168,48 @@ const CONVERSIONS: Record<string, Converter> = {
 
 export function transform(
   value: number | string,
-  inputFormat: string,
-  outputFormat: string
+  inputFormat: UnitFormat,
+  outputFormat: UnitFormat
 ): number {
   const numeric = float(value)
-  const from = inputFormat.toLowerCase()
-  const to = outputFormat.toLowerCase()
 
-  if (from === to) {
+  if (inputFormat === outputFormat) {
     return numeric
   }
 
-  const converter = CONVERSIONS[from + ':' + to]
+  const converter = CONVERSIONS[inputFormat + ':' + outputFormat]
   if (!converter) {
-    throw new Error('unsupported conversion: ' + from + ' -> ' + to)
+    throw new Error(
+      'unsupported conversion: ' + inputFormat + ' -> ' + outputFormat
+    )
   }
   return converter(numeric)
 }
 
-export function magneticVariaton(
+export function magneticVariation(
   degrees: number | string,
-  pole: string
+  pole: Pole
 ): number {
-  const p = pole.toUpperCase()
-  let deg = float(degrees)
+  const deg = float(degrees)
 
-  if (p === 'S' || p === 'W') {
-    deg *= -1
+  // Exhaustive switch: the `default` branch is unreachable under the
+  // `Pole` type, but exists as a runtime safety net for JS callers
+  // passing a bogus string (which would otherwise silently no-op and
+  // return the wrong-sign result). Unary `-deg` avoids Stryker's
+  // `*= → /=` equivalent mutant.
+  switch (pole) {
+    case 'S':
+    case 'W':
+      return -deg
+    case 'N':
+    case 'E':
+      return deg
+    default: {
+      const exhaustive: never = pole
+      throw new Error(`unsupported pole: ${String(exhaustive)}`)
+    }
   }
-
-  return deg
 }
-
-// Canonical spelling. `magneticVariaton` is a long-standing typo kept
-// for backcompat; new code should prefer `magneticVariation`.
-export const magneticVariation = magneticVariaton
 
 export function timestamp(time?: string, date?: string): string {
   /* TIME (UTC) */
@@ -232,7 +245,13 @@ export function timestamp(time?: string, date?: string): string {
   if (date) {
     day = int(date.slice(0, 2))
     month = int(date.slice(2, 4)) // this will be a value 1-12
-    year = 2000 + int(date.slice(4, 6))
+    // NMEA 0183 carries a 2-digit year. Per IEC 61162-1 convention,
+    // YY < 80 is 20YY and YY >= 80 is 19YY. Matters only for log
+    // replay; live fixes in this millennium always take the 20YY
+    // branch. `nmea0183-utilities` 0.x always computed 20YY and so
+    // stamped year 2080+ onto 198x/199x sentences from archival logs.
+    const yy = int(date.slice(4, 6))
+    year = yy < 80 ? 2000 + yy : 1900 + yy
   } else {
     const dt = new Date()
     year = dt.getUTCFullYear()
@@ -247,7 +266,7 @@ export function timestamp(time?: string, date?: string): string {
   return d.toISOString()
 }
 
-export function coordinate(value: string, pole: string): number {
+export function coordinate(value: string, pole: Pole): number {
   // N 5222.3277 should be read as 52°22.3277'
   // E 454.5824 should be read as 4°54.5824'
   //
@@ -260,18 +279,24 @@ export function coordinate(value: string, pole: string): number {
   // 4°54'34.944'' E -> 4.909706667
   // S & W should be negative.
 
-  const p = pole.toUpperCase()
-
   const split = value.split('.')
   const degrees = float(split[0]!.slice(0, -2))
   const minsec = float(split[0]!.slice(-2) + '.' + split[1])
-  let decimal = degrees + minsec / 60
+  const decimal = degrees + minsec / 60
 
-  if (p === 'S' || p === 'W') {
-    decimal *= -1
+  // Exhaustive switch (see `magneticVariation` for the rationale).
+  switch (pole) {
+    case 'S':
+    case 'W':
+      return -decimal
+    case 'N':
+    case 'E':
+      return decimal
+    default: {
+      const exhaustive: never = pole
+      throw new Error(`unsupported pole: ${String(exhaustive)}`)
+    }
   }
-
-  return decimal
 }
 
 export function isValidPosition(
@@ -291,12 +316,18 @@ export function isValidPosition(
   return true
 }
 
-export function zero(n: number | string): string {
-  const num = float(n)
-  if (num < 0) {
-    return '-' + zero(-num)
+export function zero(n: number): string {
+  // Width-2 left-pad for integer date/time components. Non-integer or
+  // non-finite input produced nonsense strings in 0.x (`"NaN"`,
+  // `"Infinity"`, `"00.5"`) that silently corrupted downstream output;
+  // reject them loudly instead.
+  if (!Number.isInteger(n)) {
+    throw new TypeError(`zero() expects an integer, got ${n}`)
   }
-  if (num < 10) {
+  if (n < 0) {
+    return '-' + zero(-n)
+  }
+  if (n < 10) {
     return '0' + n
   }
   return '' + n
@@ -309,11 +340,25 @@ export function int(n: unknown): number {
   return Number.isNaN(parsed) ? 0 : parsed
 }
 
-export const integer = int
-
 export function float(n: unknown): number {
   const parsed = parseFloat(n as string)
   return Number.isNaN(parsed) ? 0.0 : parsed
 }
 
-export const double = float
+// Default export aggregate so ESM consumers using
+// `import utils from '@signalk/nmea0183-utilities'` get the same bag
+// that `const utils = require(...)` returns in CJS.
+export default {
+  RATIOS,
+  valid,
+  appendChecksum,
+  source,
+  transform,
+  magneticVariation,
+  timestamp,
+  coordinate,
+  isValidPosition,
+  zero,
+  int,
+  float
+}
