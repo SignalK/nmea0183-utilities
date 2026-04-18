@@ -1,10 +1,10 @@
-var chai = require('chai')
-var expect = chai.expect
-var utils = require('../index')
+import { expect } from 'chai'
+import * as utils from '../src/index'
+import type { Pole } from '../src/index'
 
 describe('Coordinate', function () {
-  var N = utils.coordinate('5222.3277', 'N')
-  var W = utils.coordinate('454.5824', 'W')
+  const N = utils.coordinate('5222.3277', 'N')
+  const W = utils.coordinate('454.5824', 'W')
 
   it('Should be a string', function (done) {
     expect(N).to.be.a('number')
@@ -44,6 +44,23 @@ describe('Coordinate', function () {
   // Southern hemisphere produces a negative value.
   it('S pole flips sign', function (done) {
     expect(utils.coordinate('5222.3277', 'S')).to.equal(-52.372128333333336)
+    done()
+  })
+
+  // Lowercase and bogus pole letters throw (see magnetic_variation.ts
+  // for the 1.0 rationale — silent wrong-sign results are worse than
+  // a loud failure).
+  it('throws on lowercase pole letters', function (done) {
+    expect(function () {
+      utils.coordinate('5222.3277', 's' as Pole)
+    }).to.throw(/unsupported pole: s/)
+    done()
+  })
+
+  it('throws on unknown pole letters', function (done) {
+    expect(function () {
+      utils.coordinate('5222.3277', 'X' as Pole)
+    }).to.throw(/unsupported pole: X/)
     done()
   })
 })

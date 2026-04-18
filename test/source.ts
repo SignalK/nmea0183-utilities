@@ -1,6 +1,5 @@
-var chai = require('chai')
-var expect = chai.expect
-var utils = require('../index')
+import { expect } from 'chai'
+import * as utils from '../src/index'
 
 describe('Source', function () {
   it('Should be an object', function (done) {
@@ -36,7 +35,8 @@ describe('Source', function () {
   it('sentence defaults to empty string when argument is omitted', function (done) {
     expect(utils.source().sentence).to.equal('')
     expect(utils.source(undefined).sentence).to.equal('')
-    expect(utils.source(null).sentence).to.equal('')
+    // Matches historical behavior where null was coerced to empty string.
+    expect(utils.source(null as unknown as string).sentence).to.equal('')
     done()
   })
 })

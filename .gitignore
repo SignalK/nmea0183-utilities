@@ -4,6 +4,9 @@ node_modules
 *.db
 vessel.json
 
+# Build output
+dist
+
 # Test coverage
 coverage
 .nyc_output

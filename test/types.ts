@@ -1,6 +1,5 @@
-var chai = require('chai')
-var expect = chai.expect
-var utils = require('../index')
+import { expect } from 'chai'
+import * as utils from '../src/index'
 
 describe('Types', function () {
   it('Exports.zero(2) should be a string and equal "02"', function (done) {
@@ -15,21 +14,9 @@ describe('Types', function () {
     done()
   })
 
-  it('Exports.integer(2) should be a number and equal 2', function (done) {
-    expect(utils.integer(2)).to.be.a('number')
-    expect(utils.integer(2)).to.be.equal(2)
-    done()
-  })
-
   it('Exports.float(2.1) should be a number and equal 2.1', function (done) {
     expect(utils.float(2.1)).to.be.a('number')
     expect(utils.float(2.1)).to.be.equal(2.1)
-    done()
-  })
-
-  it('Exports.double("2.2") should be a number and equal 2.2', function (done) {
-    expect(utils.float('2.2')).to.be.a('number')
-    expect(utils.float('2.2')).to.be.equal(2.2)
     done()
   })
 
@@ -86,17 +73,6 @@ describe('Types', function () {
     done()
   })
 
-  // Alias coverage: integer / double mirror int / float.
-  it('integer is an alias for int', function (done) {
-    expect(utils.integer('42')).to.equal(utils.int('42'))
-    done()
-  })
-
-  it('double is an alias for float', function (done) {
-    expect(utils.double('3.14')).to.equal(utils.float('3.14'))
-    done()
-  })
-
   // int/float should never return NaN. The existing empty-string branch
   // returns 0, but null/undefined/non-numeric input previously fell
   // through to parseInt/parseFloat and produced NaN, corrupting
@@ -149,6 +125,31 @@ describe('Types', function () {
 
   it('Exports.float("3.14") should return 3.14', function (done) {
     expect(utils.float('3.14')).to.equal(3.14)
+    done()
+  })
+
+  // zero() is meant for integer date/time components. 0.x silently
+  // stringified NaN/Infinity/fractions as `"NaN"`, `"Infinity"`, `"00.5"`
+  // and the output poisoned any timestamp downstream. 1.0 rejects them
+  // loudly.
+  it('zero(NaN) throws', function (done) {
+    expect(function () {
+      utils.zero(NaN)
+    }).to.throw(TypeError, /zero\(\) expects an integer/)
+    done()
+  })
+
+  it('zero(Infinity) throws', function (done) {
+    expect(function () {
+      utils.zero(Infinity)
+    }).to.throw(TypeError, /zero\(\) expects an integer/)
+    done()
+  })
+
+  it('zero(0.5) throws (non-integer)', function (done) {
+    expect(function () {
+      utils.zero(0.5)
+    }).to.throw(TypeError, /zero\(\) expects an integer/)
     done()
   })
 })
