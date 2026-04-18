@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 import * as utils from '../src/index'
+import type { UnitFormat } from '../src/index'
 
 describe('Transform', function () {
   it('KM -> NM', function (done) {
@@ -294,39 +295,49 @@ describe('Transform', function () {
 
   // Unknown conversions must fail loudly. Previously transform silently
   // returned the input for any unrecognised pair, giving callers wrong
-  // values with no signal.
+  // values with no signal. Casts through `UnitFormat` here are deliberate
+  // — TS callers can't hit this path, but JS callers can and must get a
+  // clear runtime error.
   it('throws on unknown input unit', function (done) {
     expect(function () {
-      utils.transform(1, 'furlong', 'm')
+      utils.transform(1, 'furlong' as UnitFormat, 'm')
     }).to.throw(/unsupported conversion/i)
     done()
   })
 
   it('throws on unknown output unit', function (done) {
     expect(function () {
-      utils.transform(1, 'm', 'furlong')
+      utils.transform(1, 'm', 'furlong' as UnitFormat)
     }).to.throw(/unsupported conversion/i)
     done()
   })
 
   it('throws on typo (kmh instead of kph)', function (done) {
     expect(function () {
-      utils.transform(10, 'knots', 'kmh')
+      utils.transform(10, 'knots', 'kmh' as UnitFormat)
     }).to.throw(/unsupported conversion/i)
     done()
   })
 
-  // Same-unit fast path and mixed-case unit strings.
+  // Same-unit fast path.
   it('same-unit fast path returns the numeric value unchanged', function (done) {
     expect(utils.transform(42, 'm', 'm')).to.equal(42)
     expect(utils.transform('42.5', 'knots', 'knots')).to.equal(42.5)
     done()
   })
 
-  it('accepts uppercase unit strings', function (done) {
-    expect(utils.transform(1, 'KNOTS', 'MS')).to.equal(
-      utils.transform(1, 'knots', 'ms')
-    )
+  // Uppercase unit strings throw. The UnitFormat union pins callers to
+  // lowercase at compile time; the runtime `.toLowerCase()` that hid this
+  // from JS consumers was removed in 1.0.0. This test pins the new strict
+  // behaviour via a cast that models a non-conforming JS call site.
+  it('throws on uppercase unit strings', function (done) {
+    expect(function () {
+      utils.transform(
+        1,
+        'KNOTS' as unknown as UnitFormat,
+        'MS' as unknown as UnitFormat
+      )
+    }).to.throw('unsupported conversion: KNOTS -> MS')
     done()
   })
 
@@ -335,7 +346,7 @@ describe('Transform', function () {
   // looser regex assertions above.
   it('throw message includes both units separated by " -> "', function (done) {
     expect(function () {
-      utils.transform(1, 'furlong', 'smoot')
+      utils.transform(1, 'furlong' as UnitFormat, 'smoot' as UnitFormat)
     }).to.throw('unsupported conversion: furlong -> smoot')
     done()
   })

@@ -71,4 +71,37 @@ describe('Timestamp', function () {
     expect(v.slice(11, 19)).to.equal('12:00:00')
     done()
   })
+
+  // 2-digit year interpretation per IEC 61162-1: YY<80 -> 20YY, YY>=80 -> 19YY.
+  // 0.x always computed 20YY and so stamped year 2080+ onto archival logs.
+  // The four fixed points below pin the boundary, both ends of each century,
+  // and make any future off-by-one in the cutoff visible.
+
+  it('YY=00 resolves to year 2000 (lower bound of the 20YY range)', function (done) {
+    expect(utils.timestamp('000000', '010100')).to.equal(
+      '2000-01-01T00:00:00.000Z'
+    )
+    done()
+  })
+
+  it('YY=79 resolves to year 2079 (upper bound of the 20YY range)', function (done) {
+    expect(utils.timestamp('000000', '010179')).to.equal(
+      '2079-01-01T00:00:00.000Z'
+    )
+    done()
+  })
+
+  it('YY=80 resolves to year 1980 (lower bound of the 19YY range)', function (done) {
+    expect(utils.timestamp('000000', '010180')).to.equal(
+      '1980-01-01T00:00:00.000Z'
+    )
+    done()
+  })
+
+  it('YY=99 resolves to year 1999 (upper bound of the 19YY range)', function (done) {
+    expect(utils.timestamp('000000', '010199')).to.equal(
+      '1999-01-01T00:00:00.000Z'
+    )
+    done()
+  })
 })

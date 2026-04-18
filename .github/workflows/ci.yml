@@ -22,6 +22,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Covers the declared `engines.node` floor (22.x, current LTS) and
+        # the bleeding edge. Node 18 and 20 are omitted: 18 is EOL, 20
+        # reaches EOL 2026-04-30, and `signalk-server` itself requires
+        # `>=22` so any version below that is fiction for a consumer.
         node-version: [22.x, 24.x]
 
     steps:
@@ -39,6 +43,12 @@ jobs:
 
       - name: Check formatting
         run: npm run prettier:check
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
 
       - name: Run tests
         if: matrix.node-version != '24.x'
