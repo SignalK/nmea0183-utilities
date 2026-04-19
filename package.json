@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha",
     "coverage": "c8 --reporter=text --reporter=lcov npm test",
-    "mutate": "stryker run",
+    "mutation": "stryker run",
     "prettier:check": "prettier --check .",
     "prettier": "prettier --write .",
     "format": "npm run prettier"
