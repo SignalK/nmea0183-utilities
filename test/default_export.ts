@@ -18,6 +18,12 @@ describe('default export', function () {
     expect(utils.zero).to.equal(named.zero)
     expect(utils.int).to.equal(named.int)
     expect(utils.float).to.equal(named.float)
+    expect(utils.intOrNull).to.equal(named.intOrNull)
+    expect(utils.floatOrNull).to.equal(named.floatOrNull)
+    expect(utils.transformOrNull).to.equal(named.transformOrNull)
+    expect(utils.magneticVariationOrNull).to.equal(
+      named.magneticVariationOrNull
+    )
     done()
   })
 

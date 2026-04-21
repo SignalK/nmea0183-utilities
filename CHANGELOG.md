@@ -1,5 +1,33 @@
 # Changelog
 
+## 1.1.0
+
+### Non-breaking additions
+
+- **`intOrNull(n)` / `floatOrNull(n)`** — null-preserving variants of
+  `int` / `float`. Return `null` for empty / whitespace / `null` /
+  `undefined` / non-numeric input, instead of silently coercing to `0`.
+  `intOrNull('0')` still returns `0`, so legitimate zero measurements
+  stay distinguishable from "not available".
+- **`transformOrNull(value, from, to)`** — null-short-circuiting unit
+  conversion. Identical to `transform` for real input; returns `null`
+  when `value` doesn't parse. Unsupported unit pairs still throw.
+- **`magneticVariationOrNull(degrees, pole)`** — null-preserving
+  magnetic variation. Returns `null` when degrees or pole is missing or
+  unparseable (including lowercase / unknown pole letters), rather than
+  throwing or returning `0`.
+
+Motivation: IEC 61162-1 §7.2.3.4 defines a null NMEA field as "sensor
+working, value not available" — distinct from a legitimate zero. Legacy
+`int` / `float` collapse both into `0`, which has caused bugs like
+SignalK/nmea0183-signalk#192 (magnetic variation reported as 0° from an
+empty RMC field, causing a 13° error in one reporter's case). Use the
+`*OrNull` family when passing through to Signal K, which maps `null` in
+a delta value onto the same semantic.
+
+Existing `int` / `float` / `transform` / `magneticVariation` are
+unchanged for back-compat.
+
 ## 1.0.0
 
 First stable release. The package is now authored in TypeScript with strict

@@ -345,6 +345,74 @@ export function float(n: unknown): number {
   return Number.isNaN(parsed) ? 0.0 : parsed
 }
 
+// Null-preserving numeric parsers. An NMEA 0183 null field (IEC 61162-1
+// §7.2.3.4) signals "sensor working, value not available" and must not be
+// conflated with a legitimate zero. `int`/`float` above coerce to 0 for
+// back-compat; prefer these when the caller wants to preserve the
+// not-available semantic end-to-end.
+//
+//   intOrNull('')    -> null
+//   intOrNull('42')  -> 42
+//   intOrNull('abc') -> null
+export function intOrNull(n: unknown): number | null {
+  const parsed = parseInt(n as string, 10)
+  return Number.isNaN(parsed) ? null : parsed
+}
+
+export function floatOrNull(n: unknown): number | null {
+  const parsed = parseFloat(n as string)
+  return Number.isNaN(parsed) ? null : parsed
+}
+
+// Null-short-circuiting unit conversion. Lets callers write
+//   transformOrNull(parts[8], 'deg', 'rad')
+// for an optional NMEA field without a surrounding emptiness check.
+// Unsupported conversion pairs still throw (same contract as `transform`).
+export function transformOrNull(
+  value: unknown,
+  inputFormat: UnitFormat,
+  outputFormat: UnitFormat
+): number | null {
+  const numeric = floatOrNull(value)
+  if (numeric === null) {
+    return null
+  }
+  if (inputFormat === outputFormat) {
+    return numeric
+  }
+  const converter = CONVERSIONS[inputFormat + ':' + outputFormat]
+  if (!converter) {
+    throw new Error(
+      'unsupported conversion: ' + inputFormat + ' -> ' + outputFormat
+    )
+  }
+  return converter(numeric)
+}
+
+// Null-preserving magnetic variation. Returns null when either the
+// degrees field or the pole letter is missing or unparseable, rather
+// than throwing or (via the old `float` path) silently returning 0.
+// Valid pole letters still enforce the `Pole` contract; an unknown
+// pole given alongside numeric degrees is treated as "not available"
+// rather than fatal, matching how callers already treat the whole
+// field as optional when the direction indicator is empty.
+export function magneticVariationOrNull(
+  degrees: unknown,
+  pole: unknown
+): number | null {
+  const deg = floatOrNull(degrees)
+  if (deg === null) {
+    return null
+  }
+  if (pole === 'N' || pole === 'E') {
+    return deg
+  }
+  if (pole === 'S' || pole === 'W') {
+    return -deg
+  }
+  return null
+}
+
 // Default export aggregate so ESM consumers using
 // `import utils from '@signalk/nmea0183-utilities'` get the same bag
 // that `const utils = require(...)` returns in CJS.
@@ -360,5 +428,9 @@ export default {
   isValidPosition,
   zero,
   int,
-  float
+  float,
+  intOrNull,
+  floatOrNull,
+  transformOrNull,
+  magneticVariationOrNull
 }

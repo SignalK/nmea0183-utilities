@@ -162,6 +162,31 @@ doesn't parse. Accepts `unknown` so `int(null)`, `int(undefined)`,
 Same idea for `parseFloat`. Accepts numbers or numeric strings. Returns
 `0.0` on parse failure.
 
+#### `intOrNull(n) => number | null` / `floatOrNull(n) => number | null`
+
+Null-preserving variants of `int` / `float`. An NMEA 0183 null field
+(IEC 61162-1 §7.2.3.4) signals "sensor working, value not available"
+and must not be confused with a legitimate zero. `intOrNull('')`,
+`intOrNull(null)`, `intOrNull('abc')` all return `null`; `intOrNull('0')`
+returns `0`. Prefer these over `int`/`float` when the caller wants to
+pass the not-available semantic through to Signal K (which treats `null`
+the same way).
+
+#### `transformOrNull(value, from, to) => number | null`
+
+Null-short-circuiting unit conversion. Identical to `transform` for real
+input; returns `null` when `value` is empty / `null` / `undefined` /
+non-numeric. Unsupported unit pairs still throw — the null short-circuit
+runs first, so a missing field with an unknown unit pair is still
+`null`, not an error.
+
+#### `magneticVariationOrNull(degrees, pole) => number | null`
+
+Null-preserving magnetic variation. Returns `null` when degrees or pole
+is missing or unparseable (including unknown / lowercase pole letters),
+rather than throwing or silently returning `0`. `0` with a valid pole
+returns `0`, not `null`.
+
 #### `zero(n) => string`
 
 Width-2 left-pad for integer date/time components. `zero(2) === '02'`,
