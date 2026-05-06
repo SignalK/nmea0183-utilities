@@ -22,11 +22,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Covers the declared `engines.node` floor (22.x, current LTS) and
-        # the bleeding edge. Node 18 and 20 are omitted: 18 is EOL, 20
-        # reaches EOL 2026-04-30, and `signalk-server` itself requires
-        # `>=22` so any version below that is fiction for a consumer.
-        node-version: [22.x, 24.x]
+        # Covers the declared `engines.node` floor (20.10, the version
+        # Cerbo GX firmware ships) plus current LTS and the bleeding edge.
+        # Bump back to [22.x, 24.x] once Cerbo ships a newer Node.
+        node-version: [20.x, 22.x, 24.x]
 
     steps:
       - name: Checkout
