@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "@stryker-mutator/core": "^9.6.1",
-    "@stryker-mutator/mocha-runner": "^9.6.1",
+    "@stryker-mutator/mocha-runner": "^10.0.0",
     "@types/chai": "^4.3.20",
     "@types/mocha": "^10.0.10",
     "@types/node": "^26.0.0",
